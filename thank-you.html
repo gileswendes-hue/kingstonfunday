@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,11 +12,24 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/themes.css">
 </head>
 <body>
+  <div id="sky-scene" class="sky-scene" aria-hidden="true">
+    <div class="sky-scene__clouds">
+      <div class="cloud cloud--1"></div>
+      <div class="cloud cloud--2"></div>
+      <div class="cloud cloud--3"></div>
+    </div>
+    <div id="sky-balloons" class="sky-scene__balloons"></div>
+  </div>
+  <canvas id="rain-canvas" class="rain-overlay" aria-hidden="true"></canvas>
   <nav class="site-nav is-scrolled" aria-label="Main">
     <div class="site-nav__inner">
-      <a class="site-nav__brand" href="index.html">KFD <span>2026</span></a>
+      <div class="site-nav__start">
+        <a class="site-nav__brand" href="index.html">KFD <span>2026</span></a>
+        <button type="button" class="site-nav__donate" id="donate-open">Donate</button>
+      </div>
     </div>
   </nav>
 
@@ -25,15 +38,47 @@
       <div class="thank-you__icon" aria-hidden="true">✓</div>
       <h1>Thank you!</h1>
       <p class="thank-you__lead">Your camping booking payment was successful.</p>
-      <p>We will post your camping passes and wristbands to the address you provided before the event.</p>
+      <p id="thank-you-donation-extra" class="thank-you__lead" hidden>Your support helps keep Kingston Fun Day going for the village.</p>
+      <p class="thank-you__camping-only">We will post your camping passes and wristbands to the address you provided before the event.</p>
       <p id="reference-line" class="thank-you__ref" hidden>Payment reference: <strong id="paypal-ref"></strong></p>
-      <p>Arrive from <strong>4:00 PM on Friday 2 August</strong>. Depart by <strong>11:00 AM on Sunday 4 August</strong>.</p>
+      <p class="thank-you__camping-only">Arrive from <strong>4:00 PM on Friday 2 August</strong>. Depart by <strong>11:00 AM on Sunday 4 August</strong>.</p>
       <a class="btn btn--primary" href="index.html">Back to KFD</a>
       <p class="thank-you__contact">Questions? Email <a href="mailto:KFDcamping@outlook.com">KFDcamping@outlook.com</a></p>
     </div>
   </main>
 
+  <div id="donate-modal" class="donate-modal" hidden>
+    <div class="donate-modal__backdrop" data-close aria-hidden="true"></div>
+    <div class="donate-modal__panel" role="dialog" aria-modal="true" aria-labelledby="donate-title">
+      <button type="button" class="donate-modal__close" aria-label="Close donation panel">&times;</button>
+      <h2 id="donate-title" class="donate-modal__title">Support KFD</h2>
+      <p class="donate-modal__lead">Kingston Fun Day is run by the community. Your donation helps keep the festival going.</p>
+      <p class="donate-modal__label">Choose an amount</p>
+      <div class="donate-amounts">
+        <button type="button" class="donate-amount" data-donate-amount="5">£5</button>
+        <button type="button" class="donate-amount" data-donate-amount="10">£10</button>
+        <button type="button" class="donate-amount" data-donate-amount="15">£15</button>
+      </div>
+      <div class="donate-custom">
+        <label for="donate-custom">Or enter another amount (£1–£500)</label>
+        <input type="number" id="donate-custom" min="1" max="500" step="1" placeholder="e.g. 20">
+      </div>
+      <p class="donate-selected">Selected: <strong id="donate-total">Choose an amount</strong></p>
+      <p id="donate-unavailable" class="donate-unavailable" hidden>Donations are not available right now — check back soon.</p>
+      <p id="donate-error" class="field-error payment-error" role="alert" hidden></p>
+      <div id="donate-card-button"></div>
+      <p class="donate-modal__note">Pay securely by debit or credit card.</p>
+    </div>
+  </div>
+
+  <div class="theme-bar">
+    <button type="button" class="theme-bar__toggle" id="theme-toggle" aria-label="Switch to sky theme">☀️</button>
+  </div>
+
   <script src="js/config.js"></script>
+  <script src="js/paypal-shared.js"></script>
+  <script src="js/sky.js" defer></script>
+  <script src="js/donate.js" defer></script>
   <script src="js/thank-you.js"></script>
 </body>
 </html>

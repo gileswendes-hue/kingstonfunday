@@ -54,22 +54,6 @@
     };
   }
 
-  function buildPayer(values) {
-    const addressLine = values.address.split('\n').map((l) => l.trim()).filter(Boolean)[0] || values.address;
-
-    return {
-      email_address: values.email,
-      name: {
-        given_name: values.firstName.slice(0, 140),
-        surname: values.surname.slice(0, 140),
-      },
-      address: {
-        address_line_1: addressLine.slice(0, 300),
-        country_code: 'GB',
-      },
-    };
-  }
-
   function validateForm() {
     const values = readFormValues();
     const quote = calculateCampingPrice({
@@ -151,39 +135,8 @@
     }).catch(() => {});
   }
 
-  function getSdkBaseUrl() {
-    return isSandbox
-      ? 'https://www.sandbox.paypal.com/sdk/js'
-      : 'https://www.paypal.com/sdk/js';
-  }
-
   function loadPayPalSdk(clientId) {
-    return new Promise((resolve, reject) => {
-      if (window.paypal?.Buttons) {
-        resolve();
-        return;
-      }
-
-      const existing = document.getElementById('paypal-sdk');
-      if (existing) existing.remove();
-
-      const script = document.createElement('script');
-      script.id = 'paypal-sdk';
-      // Do not disable "paypal" here — PayPal returns HTTP 400 and the SDK won't load.
-      // Card-only checkout is enforced via fundingSource: paypal.FUNDING.CARD below.
-      script.src =
-        getSdkBaseUrl() +
-        '?client-id=' +
-        encodeURIComponent(clientId) +
-        '&currency=GBP&intent=capture&components=buttons' +
-        '&enable-funding=card&disable-funding=paylater,venmo';
-      script.onload = () => {
-        if (window.paypal?.Buttons) resolve();
-        else reject(new Error('PayPal SDK loaded but paypal object is missing'));
-      };
-      script.onerror = () => reject(new Error('PayPal SDK script failed to load'));
-      document.body.appendChild(script);
-    });
+    return window.KFD_PAYPAL.loadSdk(clientId, isSandbox);
   }
 
   function buildOrderPayload() {
@@ -196,7 +149,6 @@
     ].join(' · ');
 
     return {
-      payer: buildPayer(values),
       purchase_units: [
         {
           description: 'KFD 2026 camping pitch',
@@ -216,9 +168,7 @@
   }
 
   function parsePayPalError(err) {
-    if (!err) return '';
-    if (typeof err === 'string') return err;
-    return err.message || err.errMsg || err.details?.[0]?.description || '';
+    return window.KFD_PAYPAL?.parseError(err) || '';
   }
 
   function sharedCreateOrder(_data, actions) {
@@ -244,14 +194,17 @@
   function sharedOnApprove(_data, actions) {
     return actions.order
       .capture()
-      .then(async (details) => {
-        const transactionId =
-          details.purchase_units?.[0]?.payments?.captures?.[0]?.id || details.id;
+      .then((details) => {
+        const capture = details.purchase_units?.[0]?.payments?.captures?.[0];
+        const transactionId = capture?.id || details.id;
+
+        if (capture?.status && capture.status !== 'COMPLETED') {
+          throw new Error('Payment was not completed (status: ' + capture.status + ').');
+        }
 
         const values = readFormValues();
-        await notifyOrganiser(values, latestQuote, transactionId);
-
         const thankYou = config.thankYouUrl || 'thank-you.html';
+        notifyOrganiser(values, latestQuote, transactionId);
         window.location.href = thankYou + '?ref=' + encodeURIComponent(transactionId);
       })
       .catch((err) => {

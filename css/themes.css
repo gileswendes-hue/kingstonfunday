@@ -1,0 +1,325 @@
+/* ——— Theme: Sky (light) ——— */
+[data-theme="sky"] {
+  --bg: #7ec8e8;
+  --bg-card: rgba(255, 255, 255, 0.88);
+  --bg-card-solid: #f8fcff;
+  --bg-input: #ffffff;
+  --text: #1e3a5f;
+  --text-muted: #5a7290;
+  --pink: #e5007a;
+  --pink-glow: rgba(229, 0, 122, 0.25);
+  --green: #1a9e4b;
+  --blue: #1565c0;
+  --orange: #e65100;
+  --border: rgba(30, 58, 95, 0.14);
+  --error: #d32f2f;
+  --warning: #ef6c00;
+  --nav-bg: rgba(255, 255, 255, 0.82);
+  --hero-overlay: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(126, 200, 232, 0.75) 55%,
+    rgba(126, 200, 232, 0.95) 100%
+  );
+}
+
+[data-theme="sky"] body {
+  background: var(--bg);
+}
+
+[data-theme="sky"] main,
+[data-theme="sky"] .section {
+  background: transparent;
+}
+
+[data-theme="sky"] .hero__bg {
+  opacity: 0.4;
+}
+
+[data-theme="sky"] .footer {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(8px);
+}
+
+[data-theme="sky"] .sky-scene {
+  opacity: 1;
+  visibility: visible;
+}
+
+[data-theme="dark"] .sky-scene,
+:root:not([data-theme="sky"]) .sky-scene {
+  opacity: 0;
+  visibility: hidden;
+}
+
+[data-theme="sky"] .hero__overlay {
+  background: var(--hero-overlay);
+}
+
+[data-theme="sky"] .hero__glow {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, transparent 70%);
+}
+
+[data-theme="sky"] .hero__title {
+  text-shadow: 2px 2px 0 var(--pink), 0 0 30px rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="sky"] .site-nav.is-scrolled,
+[data-theme="sky"] .site-nav {
+  background: var(--nav-bg);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 1px 0 var(--border);
+}
+
+[data-theme="sky"] .site-nav__brand,
+[data-theme="sky"] .site-nav__link {
+  color: var(--text);
+}
+
+[data-theme="sky"] .site-nav__menu {
+  background: var(--nav-bg);
+}
+
+[data-theme="sky"] .section--lineup {
+  background: transparent;
+}
+
+[data-theme="sky"] .section--gallery {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+[data-theme="sky"] .info-card,
+[data-theme="sky"] .booking-form,
+[data-theme="sky"] .map-wrap,
+[data-theme="sky"] .thank-you__card,
+[data-theme="sky"] .countdown__unit {
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px rgba(30, 58, 95, 0.08);
+}
+
+[data-theme="sky"] .field-row input,
+[data-theme="sky"] .field-row select,
+[data-theme="sky"] .field-row textarea {
+  background: var(--bg-input);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+[data-theme="sky"] .price-summary {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+[data-theme="sky"] .band-card__back {
+  background: var(--bg-card-solid);
+}
+
+[data-theme="sky"] .btn--ghost {
+  color: var(--text);
+  border-color: var(--border);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="sky"] .text-pink {
+  color: var(--pink);
+}
+
+/* ——— Sky scene ——— */
+.sky-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  background: linear-gradient(180deg, #4da6d9 0%, #87ceeb 38%, #b8e4f9 100%);
+}
+
+body > .site-nav,
+body > .hero,
+body > main,
+body > footer {
+  position: relative;
+  z-index: 1;
+}
+
+.sky-scene__clouds,
+.sky-scene__balloons {
+  position: absolute;
+  inset: 0;
+}
+
+.cloud {
+  position: absolute;
+  opacity: 0.92;
+  filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.4));
+}
+
+.cloud::before,
+.cloud::after {
+  content: '';
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+}
+
+.cloud--1 {
+  width: 120px;
+  height: 40px;
+  top: 12%;
+  left: -140px;
+  background: #fff;
+  border-radius: 40px;
+  animation: cloud-drift var(--cloud-dur, 55s) linear infinite;
+}
+
+.cloud--1::before {
+  width: 50px;
+  height: 50px;
+  top: -22px;
+  left: 18px;
+}
+
+.cloud--1::after {
+  width: 65px;
+  height: 55px;
+  top: -28px;
+  left: 48px;
+}
+
+.cloud--1,
+.cloud--1::before,
+.cloud--1::after {
+  background: #fff;
+}
+
+.cloud--2 {
+  width: 90px;
+  height: 32px;
+  top: 22%;
+  left: -110px;
+  background: #fff;
+  border-radius: 32px;
+  animation: cloud-drift var(--cloud-dur, 70s) linear infinite;
+  animation-delay: -20s;
+}
+
+.cloud--2::before {
+  width: 40px;
+  height: 40px;
+  top: -18px;
+  left: 12px;
+  background: #fff;
+}
+
+.cloud--2::after {
+  width: 52px;
+  height: 44px;
+  top: -22px;
+  left: 32px;
+  background: #fff;
+}
+
+.cloud--3 {
+  width: 150px;
+  height: 48px;
+  top: 8%;
+  left: -180px;
+  background: #fff;
+  border-radius: 48px;
+  animation: cloud-drift var(--cloud-dur, 90s) linear infinite;
+  animation-delay: -45s;
+  opacity: 0.75;
+}
+
+.cloud--3::before {
+  width: 60px;
+  height: 55px;
+  top: -28px;
+  left: 25px;
+  background: #fff;
+}
+
+.cloud--3::after {
+  width: 75px;
+  height: 60px;
+  top: -32px;
+  left: 60px;
+  background: #fff;
+}
+
+.balloon {
+  position: absolute;
+  bottom: -120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: balloon-rise var(--rise-dur, 28s) linear infinite;
+  animation-delay: var(--rise-delay, 0s);
+  will-change: transform;
+}
+
+.balloon__body {
+  width: var(--balloon-size, 38px);
+  height: calc(var(--balloon-size, 38px) * 1.22);
+  border-radius: 50% 50% 48% 48% / 42% 42% 58% 58%;
+  background: hsl(var(--balloon-hue, 330) 75% 58%);
+  box-shadow: inset -6px -6px 12px rgba(0, 0, 0, 0.12), inset 4px 4px 8px rgba(255, 255, 255, 0.35);
+  animation: balloon-sway var(--sway-dur, 3s) ease-in-out infinite alternate;
+  transform-origin: bottom center;
+}
+
+.balloon__knot {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid hsl(var(--balloon-hue, 330) 65% 48%);
+}
+
+.balloon__string {
+  width: 1px;
+  height: calc(var(--balloon-size, 38px) * 2.2);
+  background: linear-gradient(180deg, rgba(60, 60, 80, 0.45), rgba(60, 60, 80, 0.2));
+  transform-origin: top center;
+  animation: string-sway var(--sway-dur, 3s) ease-in-out infinite alternate-reverse;
+}
+
+@keyframes cloud-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(100vw + 220px)); }
+}
+
+@keyframes balloon-rise {
+  from { transform: translateY(0) translateX(0); }
+  to { transform: translateY(calc(-100vh - 180px)) translateX(var(--drift, 40px)); }
+}
+
+@keyframes balloon-sway {
+  from { transform: rotate(calc(var(--swing, 8deg) * -1)); }
+  to { transform: rotate(var(--swing, 8deg)); }
+}
+
+@keyframes string-sway {
+  from { transform: rotate(calc(var(--swing, 10deg) * -1.2)); }
+  to { transform: rotate(calc(var(--swing, 10deg) * 1.2)); }
+}
+
+/* Camping section gap (red line on mockup) */
+.camping-spacer {
+  height: 2.5rem;
+}
+
+@media (min-width: 640px) {
+  .camping-spacer {
+    height: 3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud,
+  .balloon,
+  .balloon__body,
+  .balloon__string {
+    animation: none !important;
+  }
+}

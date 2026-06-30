@@ -560,6 +560,153 @@ a:hover {
   box-shadow: 0 6px 28px var(--pink-glow);
 }
 
+/* ——— Donate modal ——— */
+body.donate-open {
+  overflow: hidden;
+}
+
+.donate-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.donate-modal[hidden] {
+  display: none;
+}
+
+.donate-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.donate-modal__panel {
+  position: relative;
+  width: min(420px, 100%);
+  max-height: min(90vh, 640px);
+  overflow-y: auto;
+  padding: 1.75rem 1.5rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+}
+
+.donate-modal__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(128, 128, 128, 0.15);
+  color: var(--text);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.donate-modal__title {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  letter-spacing: 0.05em;
+}
+
+.donate-modal__lead {
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.donate-modal__label {
+  margin: 0 0 0.65rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.donate-amounts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.donate-amount {
+  padding: 0.85rem 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.donate-amount:hover {
+  border-color: var(--pink);
+}
+
+.donate-amount.is-selected {
+  border-color: var(--pink);
+  background: rgba(255, 45, 138, 0.1);
+  transform: scale(1.02);
+}
+
+.donate-custom label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.donate-custom input {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.donate-selected {
+  margin: 1rem 0 0.75rem;
+  font-size: 0.95rem;
+}
+
+.donate-selected strong {
+  color: var(--green);
+  font-size: 1.15rem;
+}
+
+.donate-unavailable {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--warning);
+}
+
+.donate-modal__note {
+  margin: 0.75rem 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+#donate-card-button {
+  min-height: 45px;
+}
+
 /* ——— Site nav ——— */
 .site-nav {
   position: fixed;
@@ -584,6 +731,35 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.site-nav__start {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.site-nav__donate {
+  flex-shrink: 0;
+  padding: 0.35rem 0.85rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--pink);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 12px var(--pink-glow);
+  transition: transform 0.15s, filter 0.15s;
+}
+
+.site-nav__donate:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
 }
 
 .site-nav__brand {
@@ -680,6 +856,11 @@ a:hover {
     width: 100%;
     text-align: center;
     padding: 0.75rem;
+  }
+
+  .site-nav__donate {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.72rem;
   }
 }
 
@@ -1006,7 +1187,7 @@ a:hover {
 .lightbox {
   position: fixed;
   inset: 0;
-  z-index: 200;
+  z-index: 150;
   background: rgba(0, 0, 0, 0.92);
   display: flex;
   align-items: center;
@@ -1123,4 +1304,127 @@ body.lightbox-open {
   font-size: 1.5rem;
   letter-spacing: 0.06em;
   color: var(--green);
+}
+
+/* ——— Fixed overlays (must stay viewport-fixed) ——— */
+body > .donate-modal,
+body > .lightbox,
+body > .theme-bar,
+body > .rain-overlay,
+body > .sky-scene {
+  position: fixed;
+}
+
+.rain-overlay {
+  inset: 0;
+  z-index: 85;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.rain-overlay.is-active {
+  opacity: 1;
+}
+
+/* ——— Theme & weather controls ——— */
+.theme-bar {
+  top: 4.75rem;
+  right: 1rem;
+  bottom: auto;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  max-width: min(320px, calc(100vw - 2rem));
+}
+
+.theme-bar__buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.theme-bar__toggle {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--bg-card);
+  backdrop-filter: blur(8px);
+  font-size: 1.35rem;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s;
+}
+
+.theme-bar__toggle:hover {
+  transform: scale(1.06);
+}
+
+.theme-bar__panel {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  font-size: 0.85rem;
+}
+
+.theme-bar__panel[hidden] {
+  display: none;
+}
+
+.theme-bar__row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.65rem;
+}
+
+.theme-bar__row:last-child {
+  margin-bottom: 0;
+}
+
+.theme-bar__row label {
+  flex: 1;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.theme-bar__row input[type='range'] {
+  flex: 1.5;
+  accent-color: var(--pink);
+  min-width: 0;
+}
+
+.theme-bar__row input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--blue);
+}
+
+.theme-bar__hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 480px) {
+  .theme-bar {
+    top: auto;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    left: auto;
+    align-items: flex-end;
+  }
+
+  .theme-bar__panel {
+    width: min(320px, calc(100vw - 1.5rem));
+  }
 }
