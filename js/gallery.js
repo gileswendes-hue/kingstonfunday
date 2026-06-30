@@ -1,0 +1,23 @@
+/** Photo archive paths — add filenames here when you upload new shots. */
+window.KFD_GALLERY = [
+  'images/archive/PXL_20240803_113515447.MP.jpg',
+  'images/archive/PXL_20240803_145517468.MP.jpg',
+  'images/archive/PXL_20240803_163939381.MP.jpg',
+  'images/archive/PXL_20240803_225613725.jpg',
+  'images/archive/PXL_20240804_010515306.MP.jpg',
+  'images/archive/PXL_20240801_190727784.jpg',
+  'images/archive/20220804_183335.jpg',
+  'images/archive/20220804_183443.jpg',
+  'images/archive/20220804_183651.jpg',
+  'images/archive/20220804_184020.jpg',
+  'images/archive/20220804_182728.jpg',
+  'images/archive/20220804_183252.jpg',
+  'images/archive/FB_IMG_1562832386182.jpg',
+  'images/archive/IMG_20190803_185338.jpg',
+  'images/archive/20220804_182859.jpg',
+  'images/archive/20220804_183244.jpg',
+  'images/archive/20220804_183534.jpg',
+  'images/archive/20220804_183842.jpg',
+  'images/archive/20220804_184105.jpg',
+  'images/archive/Screenshot_20190730_224931_com.facebook.katana.jpg',
+];

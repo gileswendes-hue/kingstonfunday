@@ -1,0 +1,327 @@
+(function () {
+  'use strict';
+
+  const config = window.KFD_CONFIG || {};
+
+  /* ——— Navigation ——— */
+  function initNav() {
+    const nav = document.querySelector('.site-nav');
+    const toggle = document.querySelector('.site-nav__toggle');
+    const links = document.querySelectorAll('.site-nav__link');
+    if (!nav) return;
+
+    toggle?.addEventListener('click', () => {
+      nav.classList.toggle('is-open');
+      toggle.setAttribute(
+        'aria-expanded',
+        nav.classList.contains('is-open') ? 'true' : 'false'
+      );
+    });
+
+    links.forEach((link) => {
+      link.addEventListener('click', () => nav.classList.remove('is-open'));
+    });
+
+    window.addEventListener(
+      'scroll',
+      () => nav.classList.toggle('is-scrolled', window.scrollY > 40),
+      { passive: true }
+    );
+
+    const sections = [...document.querySelectorAll('main section[id]')];
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          links.forEach((link) => {
+            link.classList.toggle(
+              'is-active',
+              link.getAttribute('href') === '#' + entry.target.id
+            );
+          });
+        });
+      },
+      { rootMargin: '-40% 0px -55% 0px' }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+  }
+
+  /* ——— Countdown ——— */
+  function initCountdown() {
+    const root = document.getElementById('countdown');
+    if (!root || !config.eventDate) return;
+
+    const target = new Date(config.eventDate).getTime();
+    const parts = {
+      days: root.querySelector('[data-unit="days"]'),
+      hours: root.querySelector('[data-unit="hours"]'),
+      minutes: root.querySelector('[data-unit="minutes"]'),
+      seconds: root.querySelector('[data-unit="seconds"]'),
+    };
+
+    function tick() {
+      const diff = Math.max(0, target - Date.now());
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+
+      if (parts.days) parts.days.textContent = String(d).padStart(2, '0');
+      if (parts.hours) parts.hours.textContent = String(h).padStart(2, '0');
+      if (parts.minutes) parts.minutes.textContent = String(m).padStart(2, '0');
+      if (parts.seconds) parts.seconds.textContent = String(s).padStart(2, '0');
+
+      if (diff === 0) {
+        root.classList.add('is-live');
+        const label = root.querySelector('.countdown__label');
+        if (label) label.textContent = "It's showtime!";
+      }
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  /* ——— Hero parallax ——— */
+  function initHeroMotion() {
+    const hero = document.querySelector('.hero');
+    const glow = document.querySelector('.hero__glow');
+    if (!hero || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    hero.addEventListener(
+      'mousemove',
+      (e) => {
+        const rect = hero.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        if (glow) {
+          glow.style.transform = `translate(${x * 24}px, ${y * 16}px)`;
+        }
+        const content = hero.querySelector('.hero__content');
+        if (content) {
+          content.style.transform = `translate(${x * 8}px, ${y * 6}px)`;
+        }
+      },
+      { passive: true }
+    );
+  }
+
+  /* ——— Scroll reveal ——— */
+  let revealObserver;
+
+  function initReveal() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
+      return;
+    }
+
+    revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+  }
+
+  /* ——— Lineup ——— */
+  function initLineup() {
+    const grid = document.getElementById('lineup-grid');
+    const bands = window.KFD_BANDS || [];
+    if (!grid || !bands.length) return;
+
+    grid.innerHTML = bands
+      .map((band) => {
+        const hasLinks = band.links && band.links.length > 0;
+        const linksHtml = hasLinks
+          ? band.links
+              .map(
+                (l) =>
+                  `<a class="band-card__link" href="${l.url}" target="_blank" rel="noopener">${l.label}</a>`
+              )
+              .join('')
+          : '<p class="band-card__soon">Links coming soon — catch them live at KFD!</p>';
+
+        return `
+          <article
+            class="band-card reveal${band.featured ? ' band-card--featured' : ''}"
+            style="--band-accent: ${band.accent}"
+            tabindex="0"
+            role="button"
+            aria-expanded="false"
+            data-band="${band.id}"
+          >
+            <div class="band-card__inner">
+              <div class="band-card__front">
+                <h3 class="band-card__name">${band.name}</h3>
+                <p class="band-card__style">${band.style}</p>
+                <span class="band-card__tap">${hasLinks ? 'Tap for links' : 'Tap for info'}</span>
+              </div>
+              <div class="band-card__back">
+                ${linksHtml}
+              </div>
+            </div>
+          </article>`;
+      })
+      .join('');
+
+    grid.querySelectorAll('.band-card').forEach((card) => {
+      function toggle() {
+        const open = card.classList.toggle('is-open');
+        card.setAttribute('aria-expanded', open ? 'true' : 'false');
+        grid.querySelectorAll('.band-card.is-open').forEach((other) => {
+          if (other !== card) {
+            other.classList.remove('is-open');
+            other.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('a')) return;
+        toggle();
+      });
+
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggle();
+        }
+      });
+    });
+  }
+
+  /* ——— Gallery ——— */
+  function initGallery() {
+    const grid = document.getElementById('gallery-grid');
+    const photos = window.KFD_GALLERY || [];
+    if (!grid || !photos.length) return;
+
+    const initial = 8;
+    let shown = initial;
+
+    function render() {
+      const slice = photos.slice(0, shown);
+      grid.innerHTML = slice
+        .map(
+          (src, i) => `
+          <button type="button" class="gallery-item reveal" data-index="${i}" aria-label="Open photo ${i + 1}">
+            <img src="${src}" alt="Kingston Fun Day photo ${i + 1}" loading="lazy" decoding="async">
+          </button>`
+        )
+        .join('');
+
+      grid.querySelectorAll('.gallery-item').forEach((btn) => {
+        btn.addEventListener('click', () => openLightbox(Number(btn.dataset.index)));
+      });
+
+      document.querySelectorAll('#gallery-grid .reveal').forEach((el) => {
+        revealObserver?.observe(el);
+      });
+    }
+
+    const loadMoreBtn = document.getElementById('gallery-load-more');
+    if (loadMoreBtn) {
+      loadMoreBtn.hidden = photos.length <= initial;
+      loadMoreBtn.addEventListener('click', () => {
+        shown = photos.length;
+        render();
+        loadMoreBtn.hidden = true;
+      });
+    }
+
+    render();
+
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const closeBtn = document.getElementById('lightbox-close');
+    let current = 0;
+
+    function openLightbox(index) {
+      current = index;
+      if (!lightbox || !lightboxImg) return;
+      lightboxImg.src = photos[index];
+      lightbox.hidden = false;
+      document.body.classList.add('lightbox-open');
+    }
+
+    function closeLightbox() {
+      if (!lightbox) return;
+      lightbox.hidden = true;
+      document.body.classList.remove('lightbox-open');
+    }
+
+    function step(dir) {
+      current = (current + dir + photos.length) % photos.length;
+      if (lightboxImg) lightboxImg.src = photos[current];
+    }
+
+    closeBtn?.addEventListener('click', closeLightbox);
+    lightbox?.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+    document.getElementById('lightbox-prev')?.addEventListener('click', () => step(-1));
+    document.getElementById('lightbox-next')?.addEventListener('click', () => step(1));
+
+    document.addEventListener('keydown', (e) => {
+      if (lightbox?.hidden) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') step(-1);
+      if (e.key === 'ArrowRight') step(1);
+    });
+  }
+
+  /* ——— Map ——— */
+  function initMap() {
+    const el = document.getElementById('map');
+    const mapConfig = config.map;
+    if (!el || !mapConfig || typeof L === 'undefined') return;
+
+    const map = L.map(el, {
+      scrollWheelZoom: false,
+      tap: true,
+    }).setView([mapConfig.lat, mapConfig.lng], mapConfig.zoom || 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 18,
+    }).addTo(map);
+
+    const marker = L.marker([mapConfig.lat, mapConfig.lng]).addTo(map);
+    marker.bindPopup(
+      `<strong>${mapConfig.label}</strong><br>${mapConfig.address || ''}`
+    ).openPopup();
+
+    el.addEventListener('click', () => map.scrollWheelZoom.enable(), { once: true });
+
+    const directions = document.getElementById('map-directions');
+    if (directions && mapConfig.directionsUrl) {
+      directions.href = mapConfig.directionsUrl;
+    }
+  }
+
+  function init() {
+    initNav();
+    initCountdown();
+    initHeroMotion();
+    initLineup();
+    initReveal();
+    initGallery();
+    initMap();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();

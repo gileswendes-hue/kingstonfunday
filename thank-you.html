@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking confirmed — KFD 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <nav class="site-nav is-scrolled" aria-label="Main">
+    <div class="site-nav__inner">
+      <a class="site-nav__brand" href="index.html">KFD <span>2026</span></a>
+    </div>
+  </nav>
+
+  <main class="container thank-you">
+    <div class="thank-you__card reveal is-visible">
+      <div class="thank-you__icon" aria-hidden="true">✓</div>
+      <h1>Thank you!</h1>
+      <p class="thank-you__lead">Your camping booking payment was successful.</p>
+      <p>We will post your camping passes and wristbands to the address you provided before the event.</p>
+      <p id="reference-line" class="thank-you__ref" hidden>PayPal reference: <strong id="paypal-ref"></strong></p>
+      <p>Arrive from <strong>4:00 PM on Friday 2 August</strong>. Depart by <strong>11:00 AM on Sunday 4 August</strong>.</p>
+      <a class="btn btn--primary" href="index.html">Back to KFD</a>
+      <p class="thank-you__contact">Questions? Email <a href="mailto:KFDcamping@outlook.com">KFDcamping@outlook.com</a></p>
+    </div>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref) {
+      document.getElementById('reference-line').hidden = false;
+      document.getElementById('paypal-ref').textContent = ref;
+    }
+  </script>
+</body>
+</html>

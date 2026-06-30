@@ -1,540 +1,250 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kingston Fun Day - Construction Carnival!</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
-        body {
-            font-family: 'Fredoka', sans-serif;
-            overflow: hidden;
-            margin: 0;
-            padding: 0;
-        }
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            pointer-events: auto;
-        }
-        .content-layer {
-            position: relative;
-            z-index: 20;
-            pointer-events: none;
-        }
-        .interactive {
-            pointer-events: auto;
-        }
-
-        /* NEW: Colorful & Bouncy Lettering Animation Logic */
-        @keyframes bounceLetters {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            15% { transform: translateY(-10px) rotate(-1deg); }
-            30% { transform: translateY(-15px) rotate(2deg); }
-            45% { transform: translateY(0) rotate(0deg); }
-            60% { transform: translateY(-5px) rotate(-0.5deg); }
-            100% { transform: translateY(0) rotate(0deg); }
-        }
-
-        .bounce-title span {
-            display: inline-block;
-            animation: bounceLetters 6s infinite ease-in-out;
-            transform-origin: bottom;
-            cursor: pointer; /* Visually interactive */
-            transition: transform 0.2s ease;
-        }
-
-        .bounce-title span:hover {
-            transform: scale(1.1) rotate(2deg); /* Interactive interaction on hover */
-        }
-
-        /* Staggered Delays for "Occasionally Bouncy" feel */
-        .bounce-title span:nth-child(1)  { animation-delay: 0.1s; }
-        .bounce-title span:nth-child(2)  { animation-delay: 0.2s; }
-        .bounce-title span:nth-child(3)  { animation-delay: 0.3s; }
-        .bounce-title span:nth-child(4)  { animation-delay: 0.4s; }
-        .bounce-title span:nth-child(5)  { animation-delay: 0.5s; }
-        .bounce-title span:nth-child(6)  { animation-delay: 0.6s; }
-        .bounce-title span:nth-child(7)  { animation-delay: 0.7s; }
-        .bounce-title span:nth-child(8)  { animation-delay: 1.0s; } /* Extended pause */
-        .bounce-title span:nth-child(9)  { animation-delay: 1.1s; }
-        .bounce-title span:nth-child(10) { animation-delay: 1.2s; }
-        .bounce-title span:nth-child(11) { animation-delay: 1.3s; }
-        .bounce-title span:nth-child(12) { animation-delay: 1.4s; }
-        .bounce-title span:nth-child(13) { animation-delay: 1.5s; }
-        .bounce-title span:nth-child(14) { animation-delay: 1.6s; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Kingston Fun Day 2026 — free community festival in Kingston, South Devon. Live music, camping, and good times. Saturday 1 August.">
+  <title>KFD 2026 — Kingston Fun Day</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="bg-gradient-to-b from-sky-400 to-blue-500 min-h-screen flex items-center justify-center p-4 relative select-none">
-
-    <canvas id="balloonCanvas"></canvas>
-
-    <div class="content-layer absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-5 rounded-xl shadow-lg border border-slate-200 interactive flex flex-col items-center gap-4">
-        <div class="flex flex-col items-center gap-2">
-            <label for="windSlider" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                🌬️ Wind Velocity
-            </label>
-            <div class="flex items-center gap-3">
-                <span class="text-xs text-slate-500">Still</span>
-                <input type="range" id="windSlider" min="0" max="5" step="0.1" value="1.5" 
-                    class="w-32 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-500 interactive">
-                <span class="text-xs text-slate-500">Breeze</span>
-            </div>
-            <span id="windDisplay" class="text-lg font-bold text-blue-600">1.5</span>
-        </div>
-        
-        <div class="flex items-center gap-3 w-full justify-between">
-            <label for="rainToggle" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                🌧️ Rain
-            </label>
-            <div class="relative inline-block w-12 h-6 rounded-full p-1 cursor-pointer interactive" id="rainToggleContainer">
-                <input type="checkbox" id="rainToggle" class="sr-only peer">
-                <div class="w-full h-full bg-slate-300 peer-checked:bg-blue-600 rounded-full transition duration-300"></div>
-                <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition duration-300 peer-checked:translate-x-6"></div>
-            </div>
-        </div>
+<body>
+  <nav class="site-nav" aria-label="Main">
+    <div class="site-nav__inner">
+      <a class="site-nav__brand" href="#home">KFD <span>2026</span></a>
+      <button class="site-nav__toggle" type="button" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="site-nav__menu" id="site-nav-menu">
+        <a class="site-nav__link is-active" href="#home">Home</a>
+        <a class="site-nav__link" href="#lineup">Lineup</a>
+        <a class="site-nav__link" href="#gallery">Photos</a>
+        <a class="site-nav__link" href="#find-us">Find us</a>
+        <a class="site-nav__link site-nav__link--cta" href="#camping">Camping</a>
+      </div>
     </div>
+  </nav>
 
-    <div class="content-layer max-w-xl w-full bg-white/95 backdrop-blur-md p-8 md:p-12 rounded-3xl shadow-2xl text-center border-4 border-yellow-400 transform transition-all duration-300 hover:scale-[1.01]">
-        
-        <div class="inline-block bg-amber-100 text-amber-800 text-sm font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider border border-amber-300 mb-6 shadow-xs">
-            🎈 The fairground is under construction
+  <header id="home" class="hero">
+    <div class="hero__bg" role="img" aria-label="KFD 2026 festival poster"></div>
+    <div class="hero__overlay"></div>
+    <div class="hero__glow" aria-hidden="true"></div>
+    <div class="hero__content">
+      <p class="hero__eyebrow">Kingston Fun Day · South Devon</p>
+      <h1 class="hero__title">KFD <span>2026</span></h1>
+      <p class="hero__date">Saturday 1 August</p>
+
+      <div id="countdown" class="countdown" aria-live="polite">
+        <p class="countdown__label">Countdown to KFD</p>
+        <div class="countdown__grid">
+          <div class="countdown__unit"><span data-unit="days">00</span><small>Days</small></div>
+          <div class="countdown__unit"><span data-unit="hours">00</span><small>Hrs</small></div>
+          <div class="countdown__unit"><span data-unit="minutes">00</span><small>Mins</small></div>
+          <div class="countdown__unit"><span data-unit="seconds">00</span><small>Secs</small></div>
         </div>
-        
-        <h1 class="text-4xl md:text-5xl font-bold tracking-tight leading-tight mb-4 bounce-title interactive">
-            <span class="text-red-500">K</span><span class="text-orange-500">I</span><span class="text-yellow-500">N</span><span class="text-green-500">G</span><span class="text-blue-500">S</span><span class="text-purple-500">T</span><span class="text-red-500">O</span><span class="text-orange-500">N</span>
-            <span class="text-yellow-500"> F</span><span class="text-green-500">U</span><span class="text-blue-500">N</span>
-            <span class="text-purple-500"> D</span><span class="text-red-500">A</span><span class="text-orange-500">Y</span>
-        </h1>
-        
-        <p class="text-slate-600 text-lg md:text-xl font-medium max-w-md mx-auto mb-8 leading-relaxed">
-            The carnies are building our digital fairground. Pop some balloons, click the clouds, and look out for the rain! Look out for the wind.
-        </p>
+      </div>
 
-        <div class="max-w-md mx-auto mb-10">
-            <form action="https://formspree.io/f/xoqovwgy" method="POST" class="flex flex-col sm:flex-row gap-2.5">
-                <input type="email" name="email" placeholder="Enter your email address" required 
-                    class="interactive flex-1 px-5 py-3.5 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-hidden bg-white text-slate-800 font-medium transition-all shadow-inner placeholder:text-slate-400">
-                <button type="submit" 
-                    class="interactive bg-yellow-400 hover:bg-yellow-500 active:bg-yellow-600 text-slate-900 font-bold px-6 py-3.5 rounded-xl border-b-4 border-yellow-600 active:border-b-0 active:mt-1 transition-all shadow-md cursor-pointer whitespace-nowrap">
-                    Notify Me
-                </button>
-            </form>
-        </div>
-
-        <div class="border-t border-slate-100 pt-6 space-y-5 px-2">
-            
-            <div class="flex flex-col md:flex-row justify-between items-center text-sm font-semibold text-slate-500 gap-4">
-                <a href="https://w3w.co/hedge.tidal.admits" target="_blank" class="interactive bg-red-50 text-red-700 px-4 py-2 rounded-full border border-red-200 flex items-center gap-2 transition hover:bg-red-100">
-                    <svg viewBox="0 0 24 24" class="w-5 h-5 fill-red-600"><path d="M12,2C12,2,12,2,12,2c-0.1,0-0.2,0-0.2,0c0,0,0,0,0,0C11.5,2,11.2,2,11,2H9.2C8,2,7.2,3,7.2,4c0,0.1,0,0.1,0,0.1L8,12.5c0,0.1,0.1,0.2,0.1,0.2C8.2,12.8,8.2,12.9,8.3,13c0,0.1,0.1,0.2,0.1,0.3c0.1,0.1,0.2,0.2,0.3,0.3c0.1,0.1,0.2,0.2,0.4,0.3c0.1,0.1,0.3,0.2,0.4,0.3C9,14.3,9.2,14.4,9.4,14.4c0.2,0.1,0.4,0.1,0.6,0.1c0.1,0,0.1,0,0.2,0H10v0.1c0,0.3-0.1,0.6-0.1,1c-0.1,0.3-0.1,0.7-0.1,1c0,0.3,0,0.7,0,1c0.1,0.4,0.1,0.7,0.2,1c0.1,0.3,0.2,0.7,0.3,1c0.1,0.3,0.3,0.7,0.4,1C10.8,20.6,11,21,11,21c0.1,0.2,0.2,0.3,0.4,0.5c0.2,0.2,0.4,0.3,0.6,0.4c0.2,0.1,0.5,0.2,0.7,0.2C12.8,22.1,13,22.1,13,22.1h0c0.3,0,0.6-0.1,0.9-0.2c0.2-0.1,0.5-0.2,0.7-0.3c0.2-0.1,0.4-0.3,0.6-0.4c0.2-0.2,0.3-0.3,0.5-0.5l0.1-0.2c0.1-0.2,0.2-0.3,0.3-0.5c0.1-0.2,0.2-0.4,0.3-0.6c0.1-0.2,0.2-0.4,0.3-0.7l0.1-0.3l0.1-0.3c0.1-0.2,0.1-0.5,0.2-0.8c0-0.3,0.1-0.6,0.1-0.9c0-0.3,0.1-0.7,0.1-1c0-0.4,0-0.8-0.1-1.1c-0.1-0.3-0.1-0.7-0.1-1.1s-0.1-0.8-0.1-1.2s0-0.8,0-1.2s0.1-0.7,0.2-1l0.1-0.3l0.1-0.2c0-0.1,0.1-0.2,0.1-0.2l0.9-8.4c0-0.1,0-0.1,0-0.1c0-1.1-1.1-2-2-2H11.2C11,2,11,2,11,2S11.2,2,11.2,2H11C11.2,2,11.5,2,11.8,2c0.1,0,0.1,0,0.2,0h0.1C12,2,12,2,12,2C12,2,12,2,12,2L12,2z M10.4,11.3l-0.7-7.2l1.6,0l0.7,7.2L10.4,11.3z M11.8,11.3l0.7-7.2l1.6,0l-0.7,7.2L11.8,11.3z"/></svg>
-                    ///hedge.tidal.admits
-                </a>
-                <div class="bg-slate-100 px-3 py-1 rounded-md text-slate-700 flex-shrink-0 text-base">Popped: <span id="score" class="text-blue-600 font-bold">0</span></div>
-            </div>
-
-            <div class="flex flex-wrap justify-center items-center gap-6 pt-4 text-slate-600 text-base font-semibold">
-                <a href="https://www.facebook.com/Kingstonfunday/" target="_blank" class="interactive flex items-center gap-2 hover:text-blue-600 transition">
-                    <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
-                    <span>/Kingstonfunday</span>
-                </a>
-                <a href="https://www.instagram.com/kfd_kingstonfunday" target="_blank" class="interactive flex items-center gap-2 hover:text-pink-600 transition">
-                    <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current"><path d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.254 1.216.598 1.772 1.153a4.908 4.908 0 011.153 1.772c.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 01-1.153 1.772 4.915 4.915 0 01-1.772 1.153c-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 01-1.772-1.153 4.904 4.904 0 01-1.153-1.772c-.248-.637-.415-1.363-.465-2.428C2.01 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.065.217-1.79.465-2.428a4.88 4.88 0 011.153-1.772A4.897 4.897 0 015.45 2.525c.638-.248 1.362-.415 2.428-.465C8.944 2.01 9.283 2 12 2zm0 5a5 5 0 100 10 5 5 0 000-10zm6.5-.25a1.25 1.25 0 10-2.5 0 1.25 1.25 0 002.5 0zM12 9a3 3 0 110 6 3 3 0 010-6z"/></svg>
-                    <span>/kfd_kingstonfunday</span>
-                </a>
-            </div>
-        </div>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#lineup">See the lineup</a>
+        <a class="btn btn--ghost" href="#camping">Book camping</a>
+      </div>
+      <a class="hero__link" href="https://www.instagram.com/kfd_kingstonfunday/" target="_blank" rel="noopener">@kfd_kingstonfunday</a>
     </div>
+  </header>
 
-    <script>
-        const canvas = document.getElementById('balloonCanvas');
-        const ctx = canvas.getContext('2d');
-        const scoreDisplay = document.getElementById('score');
-        const windSlider = document.getElementById('windSlider');
-        const windDisplay = document.getElementById('windDisplay');
-        const rainToggle = document.getElementById('rainToggle');
+  <main>
+    <section id="about" class="section section--about">
+      <div class="container">
+        <div class="about-grid reveal">
+          <div class="about-copy">
+            <h2 class="section-title">A village festival<br><span class="text-pink">built by the community</span></h2>
+            <p>Kingston Fun Day returns to the recreation ground for a day of live music, local food, and proper South Devon good vibes. Free entry — just bring yourself, your mates, and your dancing shoes.</p>
+            <ul class="about-facts">
+              <li><strong>Saturday 1 August 2026</strong> — main event day</li>
+              <li><strong>10 bands</strong> on the poster, one marquee, maximum energy</li>
+              <li><strong>Camping</strong> Fri 2 Aug – Sun 4 Aug (book below)</li>
+              <li><strong>Location</strong> Kingston Recreation Ground, Knightsbridge</li>
+            </ul>
+          </div>
+          <figure class="about-poster reveal">
+            <img src="images/2026_lineup.jpg" alt="KFD 2026 official lineup poster" width="600" height="849" loading="eager">
+          </figure>
+        </div>
+      </div>
+    </section>
 
-        // Wind & Rain State
-        let windSpeed = 1.5; 
-        let currentWindVelocity = windSpeed; // For smoothing
-        let isRainOn = false;
+    <section id="lineup" class="section section--lineup">
+      <div class="container">
+        <header class="section-header reveal">
+          <h2 class="section-title">The lineup</h2>
+          <p class="section-subtitle">Ten acts, ten different flavours. Tap a name to flip the card and find their links.</p>
+        </header>
+        <div id="lineup-grid" class="lineup-grid"></div>
+        <p class="lineup-note reveal">Missing a link? Drop us a DM on <a href="https://www.instagram.com/kfd_kingstonfunday/" target="_blank" rel="noopener">Instagram</a> and we'll add it.</p>
+      </div>
+    </section>
 
-        // NEW: Rain State
-        let rain = [];
+    <section id="gallery" class="section section--gallery">
+      <div class="container">
+        <header class="section-header reveal">
+          <h2 class="section-title">Through the years</h2>
+          <p class="section-subtitle">Moments from past Kingston Fun Days. Click any photo to enlarge.</p>
+        </header>
+        <div id="gallery-grid" class="gallery-grid"></div>
+        <button type="button" class="btn btn--ghost btn--load" id="gallery-load-more" hidden>Load more photos</button>
+      </div>
+    </section>
 
-        windSlider.addEventListener('input', (e) => {
-            windSpeed = parseFloat(e.target.value);
-            windDisplay.innerText = windSpeed.toFixed(1);
-        });
+    <section id="find-us" class="section section--map">
+      <div class="container">
+        <header class="section-header reveal">
+          <h2 class="section-title">Find us</h2>
+          <p class="section-subtitle">Kingston Recreation Ground, Knightsbridge · Kingston village, South Devon TQ7</p>
+        </header>
+        <div class="map-wrap reveal">
+          <div id="map" class="map" aria-label="Interactive map showing Kingston Recreation Ground"></div>
+          <div class="map-actions">
+            <a class="btn btn--primary" id="map-directions" href="#" target="_blank" rel="noopener">Get directions</a>
+            <p class="map-hint">Scroll/zoom enabled after you click the map. Single-track lanes — allow extra time!</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        rainToggle.addEventListener('change', (e) => {
-            isRainOn = e.target.checked;
-        });
+    <section id="camping" class="section section--camping">
+      <div class="container">
+        <header class="section-header reveal">
+          <h2 class="section-title">Camping</h2>
+          <p class="section-subtitle">Stay on site after the party. Basic camping in the field with portable toilets — first come, first served.</p>
+        </header>
 
-        // Track global logic time
-        let time = 0;
+        <div class="info-grid reveal">
+          <article class="info-card">
+            <h3>Camping info</h3>
+            <ul>
+              <li>Arrive from <strong>4:00 PM Friday 2 August</strong></li>
+              <li>Depart by <strong>11:00 AM Sunday 4 August</strong></li>
+              <li>Tent or campervan — one pitch, up to 6 people</li>
+              <li>Passes &amp; wristbands posted before the event</li>
+            </ul>
+          </article>
+          <article class="info-card info-card--pricing">
+            <h3>Pricing</h3>
+            <dl class="price-list">
+              <div><dt>Pitch fee</dt><dd>£12 / night</dd></div>
+              <div><dt>Included</dt><dd>Up to 4 people</dd></div>
+              <div><dt>Extra adults (17+)</dt><dd>£3 / person / night</dd></div>
+              <div><dt>Children (under 16)</dt><dd>Free</dd></div>
+              <div><dt>Printing &amp; postage</dt><dd>£3 per booking</dd></div>
+            </dl>
+          </article>
+        </div>
 
-        let scores = { total: 0 };
-        let balloons = [];
-        let clouds = []; // NEW: Diverse clouds array
-        let particles = [];
-        
-        const colors = [
-            { main: '#ff4a5a', string: '#cc3b48' }, // Red
-            { main: '#3b82f6', string: '#2563eb' }, // Blue
-            { main: '#eab308', string: '#ca8a04' }, // Yellow
-            { main: '#22c55e', string: '#16a34a' }, // Green
-            { main: '#a855f7', string: '#9333ea' }, // Purple
-            { main: '#f97316', string: '#ea580c' }  // Orange
-        ];
+        <div id="deadline-banner" class="banner banner--warning" hidden>
+          Bookings closed — deadline <strong>29 July</strong> has passed.
+          Email <a href="mailto:KFDcamping@outlook.com">KFDcamping@outlook.com</a>.
+        </div>
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        <div id="config-banner" class="banner banner--info" hidden>
+          PayPal not configured — add your Client ID to <code>js/config.js</code> (Client ID only, never the Secret).
+        </div>
 
-        // DEBRIS PARTICLE
-        class Particle {
-            constructor(x, y, color) {
-                this.x = x;
-                this.y = y;
-                this.color = color;
-                this.radius = Math.random() * 2 + 1;
-                const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 6 + 2;
-                this.vx = Math.cos(angle) * speed;
-                this.vy = Math.sin(angle) * speed;
-                this.alpha = 1;
-                this.gravity = 0.1;
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.vy += this.gravity;
-                this.alpha -= 0.02;
-            }
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.alpha;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-                ctx.restore();
-            }
-        }
+        <form id="booking-form" class="booking-form reveal" novalidate>
+          <fieldset class="form-group">
+            <legend>Your details</legend>
+            <div class="field-row">
+              <label for="name">Full name <span aria-hidden="true">*</span></label>
+              <input type="text" id="name" name="name" required autocomplete="name">
+            </div>
+            <div class="field-row">
+              <label for="email">Email address <span aria-hidden="true">*</span></label>
+              <input type="email" id="email" name="email" required autocomplete="email">
+            </div>
+            <div class="field-row">
+              <label for="address">Postal address <span aria-hidden="true">*</span></label>
+              <textarea id="address" name="address" rows="3" required placeholder="For posting your passes and wristbands" autocomplete="street-address"></textarea>
+            </div>
+          </fieldset>
 
-        // BALLOON (Updated Bouncy Strings)
-        class Balloon {
-            constructor() {
-                this.r = Math.random() * 15 + 30; // Radius
-                this.x = (Math.random() * canvas.width * 0.8) - canvas.width * 0.1;
-                this.y = canvas.height + this.r + Math.random() * 100;
-                this.floatSpeed = Math.random() * 1.5 + 1;
-                this.color = colors[Math.floor(Math.random() * colors.length)];
-                this.wobbleSpeed = Math.random() * 0.02 + 0.01;
-                this.wobbleAmount = Math.random() * 15 + 5;
-                this.wobbleAngle = Math.random() * Math.PI;
-                // Add unique phase for coordinated sway
-                this.uniquePhase = Math.random() * Math.PI * 2;
-            }
+          <fieldset class="form-group">
+            <legend>Your pitch</legend>
+            <div class="field-row field-row--inline">
+              <div>
+                <label for="nights">Number of nights <span aria-hidden="true">*</span></label>
+                <select id="nights" name="nights" required>
+                  <option value="1">1 night</option>
+                  <option value="2" selected>2 nights (Fri–Sun)</option>
+                </select>
+              </div>
+              <div>
+                <label>Accommodation <span aria-hidden="true">*</span></label>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" name="accommodation" value="tent" checked>
+                    Tent
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" name="accommodation" value="campervan">
+                    Campervan
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="field-row field-row--inline field-row--counts">
+              <div>
+                <label for="adults">Adults (17+) <span aria-hidden="true">*</span></label>
+                <input type="number" id="adults" name="adults" min="1" max="6" value="1" required>
+              </div>
+              <div>
+                <label for="children">Children (under 16)</label>
+                <input type="number" id="children" name="children" min="0" max="5" value="0">
+              </div>
+              <div>
+                <label for="dogs">Dogs</label>
+                <input type="number" id="dogs" name="dogs" min="0" max="3" value="0">
+              </div>
+            </div>
+            <p id="occupancy-error" class="field-error" role="alert" hidden>Maximum 6 people per pitch (adults + children).</p>
+          </fieldset>
 
-            update() {
-                this.y -= this.floatSpeed;
-                this.x += currentWindVelocity * 2.0;
-                this.wobbleAngle += this.wobbleSpeed * (1.0 + currentWindVelocity * 0.3);
-                this.windSway = Math.sin(this.wobbleAngle) * this.wobbleAmount;
-                this.currentX = this.x + this.windSway;
-            }
+          <aside class="price-summary" aria-live="polite">
+            <h3>Your total</h3>
+            <ul id="price-breakdown" class="price-breakdown"></ul>
+            <p class="price-total">Total: <strong id="price-total">£0.00</strong></p>
+          </aside>
 
-            draw() {
-                ctx.save();
-                ctx.translate(this.currentX, this.y);
+          <div id="paypal-section" class="paypal-section">
+            <p class="paypal-note">Pay securely via PayPal — debit/credit card or PayPal account.</p>
+            <div id="paypal-buttons"></div>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
 
-                // DYNAMIC SWAYING BALLOON STRING
-                const stringLength = 40;
-                const knotBaseY = this.r;
-                ctx.beginPath();
-                ctx.moveTo(0, knotBaseY);
-                
-                // Pendulum-like sway base coordinates
-                const stringSwayFactor = Math.sin(time * 0.05 + this.uniquePhase) * (20 + currentWindVelocity * 10);
-                const stringSwayBottomY = knotBaseY + stringLength + currentWindVelocity * 5;
+  <footer class="footer">
+    <p>Kingston Fun Day · Community event ·
+      <a href="https://www.instagram.com/kfd_kingstonfunday/" target="_blank" rel="noopener">Instagram</a> ·
+      <a href="mailto:KFDcamping@outlook.com">KFDcamping@outlook.com</a>
+    </p>
+  </footer>
 
-                // Bezier sway
-                ctx.bezierCurveTo(
-                    stringSwayFactor * 0.5, knotBaseY + 15,
-                    stringSwayFactor * 0.7, knotBaseY + 25,
-                    stringSwayFactor, stringSwayBottomY
-                );
+  <div id="lightbox" class="lightbox" hidden>
+    <button type="button" class="lightbox__close" id="lightbox-close" aria-label="Close">&times;</button>
+    <button type="button" class="lightbox__nav lightbox__nav--prev" id="lightbox-prev" aria-label="Previous photo">&#8249;</button>
+    <img id="lightbox-img" class="lightbox__img" alt="">
+    <button type="button" class="lightbox__nav lightbox__nav--next" id="lightbox-next" aria-label="Next photo">&#8250;</button>
+  </div>
 
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-                ctx.lineWidth = 1.5 + currentWindVelocity * 0.1; 
-                ctx.stroke();
-
-                // Balloon Knot Tie
-                ctx.beginPath();
-                ctx.moveTo(-4, this.r);
-                ctx.lineTo(4, this.r);
-                ctx.lineTo(0, this.r - 4);
-                ctx.closePath();
-                ctx.fillStyle = this.color.string;
-                ctx.fill();
-
-                // Balloon Body
-                ctx.beginPath();
-                ctx.ellipse(0, 0, this.r * 0.85, this.r, 0, 0, Math.PI * 2);
-                ctx.fillStyle = this.color.main;
-                ctx.fill();
-
-                // Gloss Highlight/Shine
-                ctx.beginPath();
-                ctx.ellipse(-this.r * 0.3, -this.r * 0.4, this.r * 0.15, this.r * 0.3, Math.PI / 6, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-                ctx.fill();
-
-                ctx.restore();
-            }
-
-            isHit(mx, my) {
-                const dx = mx - this.currentX;
-                const dy = my - this.y;
-                return (dx * dx) / (this.r * 0.85 * this.r * 0.85) + (dy * dy) / (this.r * this.r) <= 1;
-            }
-        }
-
-        // NEW: DIVERSE CLOUD CLASS
-        class Cloud {
-            constructor() {
-                this.x = - (Math.random() * 500 + 200); // Start off-screen left
-                this.y = (Math.random() * canvas.height * 0.6) + 100; // Sky area
-                
-                // Heterogeneous shape parameters
-                this.w = (Math.random() * 150 + 200); // Main Width
-                this.h = this.w * (Math.random() * 0.4 + 0.4); // Main Height (ellipse aspect)
-                
-                // Randomize composition (number of unique "bumps")
-                this.bumps = [];
-                const bumpCount = Math.floor(Math.random() * 3 + 3);
-                for(let i=0; i<bumpCount; i++) {
-                    this.bumps.push({
-                        xFactor: Math.random() * 2 - 1, // Offset left/right (-1 to 1)
-                        yFactor: Math.random() * 0.8,    // Offset down (0 to 0.8)
-                        rFactor: Math.random() * 0.4 + 0.3 // Size (0.3 to 0.7)
-                    });
-                }
-                
-                this.speed = Math.random() * 0.5 + 0.3; // base speed
-                this.color = `rgba(255, 255, 255, ${Math.random() * 0.2 + 0.6})`; // Randomized opacity
-                // Unique subtle vertical wobble
-                this.wobblePhase = Math.random() * Math.PI * 2;
-            }
-
-            update() {
-                // Move RIGHT with logic speed and variable wind velocity
-                this.x += (this.speed + currentWindVelocity * 1.5);
-                
-                // Subtle organic vertical wobble
-                this.currentY = this.y + Math.sin(time * 0.02 + this.wobblePhase) * 10;
-            }
-
-            draw() {
-                ctx.save();
-                ctx.fillStyle = this.color;
-                
-                // 1. Draw Main Body
-                ctx.beginPath();
-                ctx.ellipse(this.x, this.currentY, this.w, this.h, 0, 0, Math.PI * 2);
-                ctx.fill();
-
-                // 2. Draw layered unique illustrative elements
-                for(let bump of this.bumps){
-                    ctx.beginPath();
-                    // Offset circles relative to main ellipse organically
-                    const cx = this.x + (bump.xFactor * this.w * 0.7);
-                    const cy = this.currentY + (bump.yFactor * this.h);
-                    const cr = this.w * bump.rFactor;
-                    ctx.arc(cx, cy, cr, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                ctx.restore();
-            }
-
-            isHit(mx, my) {
-                const dx = mx - this.x;
-                const dy = my - this.currentY;
-                // Simple ellipse collision (good enough approximation for heterogeneous shapes)
-                return (dx * dx) / (this.w * this.w) + (dy * dy) / (this.h * this.h) <= 1;
-            }
-        }
-
-        // NEW: RAIN DROP CLASS (Coordindated Physics FIX)
-        class RainDrop {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                // Spawn randomly along the *entire* width (adjusted for wind drift)
-                this.x = (Math.random() * (canvas.width * 1.2)) - (canvas.width * 0.1);
-                // Start just above the viewport
-                this.y = -(Math.random() * 100); 
-                // Variables affect coordinated logic
-                this.fallSpeed = Math.random() * 10 + 15; // vy
-                this.length = Math.random() * 10 + 10;
-                this.color = 'rgba(255, 255, 255, 0.4)';
-            }
-            update() {
-                // Rain falls vertically
-                this.y += this.fallSpeed;
-                
-                // Rain is strictly affected by wind logic, slanted RIGHT
-                // Slant angle coordinates strictly with wind velocity [vx = f(wind)]
-                this.currentX = this.x + currentWindVelocity * 2.5;
-
-                // Simple reset for logical coordination
-                if(this.y > canvas.height) {
-                    this.reset();
-                    // Keepcoordinated logical speed, update only starting X
-                    this.y = -20;
-                }
-            }
-            draw() {
-                ctx.save();
-                ctx.strokeStyle = this.color;
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(this.currentX, this.y);
-                // Simple logical line coordinated with wind velocity
-                const vx_wind = currentWindVelocity * 1.0; 
-                ctx.lineTo(this.currentX + vx_wind, this.y + this.length);
-                ctx.stroke();
-                ctx.restore();
-            }
-        }
-
-        function createPopParticles(x, y, color) {
-            for (let i = 0; i < 20; i++) {
-                particles.push(new Particle(x, y, color));
-            }
-        }
-
-        function spawnBalloon() {
-            if (balloons.length < 15 + Math.floor(currentWindVelocity)) { 
-                balloons.push(new Balloon());
-            }
-        }
-        setInterval(spawnBalloon, 800);
-
-        // SPAWN DIVERSE CLOUDS
-        function spawnCloud() {
-            if (clouds.length < 5 + Math.floor(currentWindVelocity / 2)) {
-                clouds.push(new Cloud());
-            }
-        }
-        setInterval(spawnCloud, 3000);
-
-        function handlePop(clientX, clientY) {
-            let hitFound = false;
-
-            // Check balloons first
-            for (let i = balloons.length - 1; i >= 0; i--) {
-                if (balloons[i].isHit(clientX, clientY)) {
-                    createPopParticles(balloons[i].currentX, balloons[i].y, balloons[i].color.main);
-                    balloons.splice(i, 1);
-                    scores.total++;
-                    hitFound = true;
-                    break; // Pop only one
-                }
-            }
-
-            // If no balloon, check clouds
-            if(!hitFound){
-                for (let i = clouds.length - 1; i >= 0; i--) {
-                    if (clouds[i].isHit(clientX, clientY)) {
-                        createPopParticles(clouds[i].x, clouds[i].currentY, '#ffffff'); // Cloud debris
-                        clouds.splice(i, 1);
-                        scores.total++;
-                        hitFound = true;
-                        break;
-                    }
-                }
-            }
-
-            if(hitFound){
-                scoreDisplay.innerText = scores.total;
-            }
-        }
-
-        // Action Events
-        canvas.addEventListener('click', (e) => handlePop(e.clientX, e.clientY));
-        canvas.addEventListener('touchstart', (e) => {
-            const touch = e.touches;
-            handlePop(touch.clientX, touch.clientY);
-        });
-
-        // Initialize rain (spawn plenty)
-        for(let i=0; i<150; i++) {
-            rain.push(new RainDrop());
-        }
-
-        // Animation Loop
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            time++;
-
-            // Smoothly move current velocity towards targets
-            currentWindVelocity += (windSpeed - currentWindVelocity) * 0.05;
-
-            // Manage RAIN (New coordinated physics)
-            if(isRainOn){
-                for (let drop of rain) {
-                    drop.update();
-                    drop.draw();
-                }
-            }
-
-            // Manage DIVERSE CLOUDS
-            for (let i = clouds.length - 1; i >= 0; i--) {
-                clouds[i].update();
-                clouds[i].draw();
-                // Remove if off-screen right
-                if (clouds[i].x > canvas.width + clouds[i].w * 2) {
-                    clouds.splice(i, 1);
-                }
-            }
-
-            // Manage balloons
-            for (let i = balloons.length - 1; i >= 0; i--) {
-                balloons[i].update();
-                balloons[i].draw();
-
-                // Remove off-screen elements (up or far right)
-                if (balloons[i].y < -balloons[i].r * 2 || balloons[i].x > canvas.width + balloons[i].r * 2) {
-                    balloons.splice(i, 1);
-                }
-            }
-
-            // Manage pop debris particles
-            for (let i = particles.length - 1; i >= 0; i--) {
-                particles[i].update();
-                particles[i].draw();
-
-                if (particles[i].alpha <= 0) {
-                    particles.splice(i, 1);
-                }
-            }
-
-            requestAnimationFrame(animate);
-        }
-
-        // Initialize Loop
-        animate();
-    </script>
+  <script src="js/config.js"></script>
+  <script src="js/bands.js"></script>
+  <script src="js/gallery.js"></script>
+  <script src="js/pricing.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+  <script src="js/site.js" defer></script>
+  <script src="js/app.js" defer></script>
 </body>
 </html>

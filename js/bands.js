@@ -1,0 +1,81 @@
+/** Lineup data — update links any time in this one file. */
+window.KFD_BANDS = [
+  {
+    id: 'horce-divorse',
+    name: 'Horce Divorse',
+    style: 'Punk / Rock · Devon',
+    featured: true,
+    accent: '#39ff14',
+    links: [
+      { label: 'Website', url: 'https://www.horcedivorse.com/' },
+      { label: 'Spotify', url: 'https://open.spotify.com/artist/5iDawukTsOGn3RGwLouU5m' },
+      { label: 'Bandcamp', url: 'https://horcedivorse.bandcamp.com/' },
+    ],
+  },
+  {
+    id: '500-hojus',
+    name: '500 Hojus',
+    style: 'Live music',
+    accent: '#ffffff',
+    links: [],
+  },
+  {
+    id: 'all-for-jolly-duo',
+    name: 'All For Jolly Duo',
+    style: 'Cornish folk punk',
+    accent: '#ffffff',
+    links: [
+      { label: 'Website', url: 'https://allforjolly.com/' },
+      { label: 'Facebook', url: 'https://www.facebook.com/allforjolly' },
+    ],
+  },
+  {
+    id: 'vardo-manor',
+    name: 'Vardo Manor',
+    style: 'Funk · rock · reggae',
+    accent: '#ffb347',
+    links: [],
+  },
+  {
+    id: 'empire-blind',
+    name: 'Empire Blind',
+    style: 'Rock · Plymouth',
+    accent: '#ff4d4d',
+    links: [{ label: 'Bandcamp', url: 'https://empireblind.bandcamp.com/' }],
+  },
+  {
+    id: 'phoenix-proposal',
+    name: 'The Phoenix Proposal',
+    style: 'Blues · rock · soul',
+    accent: '#4dd0ff',
+    links: [],
+  },
+  {
+    id: 'iris',
+    name: 'IRIS',
+    style: 'Live music',
+    accent: '#ff2d8a',
+    links: [],
+  },
+  {
+    id: 'fret-level-midnight',
+    name: 'Fret Level Midnight',
+    style: 'Live music',
+    accent: '#ffffff',
+    links: [],
+  },
+  {
+    id: 'yeoland',
+    name: 'Yeoland',
+    style: 'Folk duo · South Dartmoor',
+    accent: '#ffffff',
+    links: [],
+  },
+  {
+    id: 'greg-shepherd',
+    name: 'Greg Shepherd',
+    style: 'Live music · Devon',
+    accent: '#ff8c42',
+    links: [],
+  },
+];
