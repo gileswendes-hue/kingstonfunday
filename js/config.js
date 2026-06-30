@@ -1,7 +1,7 @@
 window.KFD_CONFIG = window.KFD_CONFIG || {
   // PayPal Client ID only — never put your Secret here (it must stay server-side).
-  paypalClientId: '',
-  paypalEnvironment: 'sandbox',
+  paypalClientId: 'AaT8ff9uNbqydR93_F_9DiHDTL-yksk8o3hgZf9uvukT7Pj7GRkLotS27a_p5EEqDXK9tZKREld7gVk6',
+  paypalEnvironment: 'production',
 
   organiserEmail: 'KFDcamping@outlook.com',
   bookingDeadline: '2026-07-29',
