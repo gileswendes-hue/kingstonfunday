@@ -14,7 +14,9 @@
   const paymentError = document.getElementById('payment-error');
 
   let latestQuote = null;
-  let paypalRendered = false;
+  let buttonsMounted = false;
+
+  const isSandbox = config.paypalEnvironment === 'sandbox';
 
   function isBookingOpen() {
     if (!config.bookingDeadline) return true;
@@ -35,8 +37,13 @@
   }
 
   function readFormValues() {
+    const firstName = form.firstName.value.trim();
+    const surname = form.surname.value.trim();
+
     return {
-      name: form.name.value.trim(),
+      firstName,
+      surname,
+      name: [firstName, surname].filter(Boolean).join(' '),
       email: form.email.value.trim(),
       address: form.address.value.trim(),
       nights: form.nights.value,
@@ -44,6 +51,22 @@
       adults: form.adults.value,
       children: form.children.value,
       dogs: form.dogs.value,
+    };
+  }
+
+  function buildPayer(values) {
+    const addressLine = values.address.split('\n').map((l) => l.trim()).filter(Boolean)[0] || values.address;
+
+    return {
+      email_address: values.email,
+      name: {
+        given_name: values.firstName.slice(0, 140),
+        surname: values.surname.slice(0, 140),
+      },
+      address: {
+        address_line_1: addressLine.slice(0, 300),
+        country_code: 'GB',
+      },
     };
   }
 
@@ -125,9 +148,13 @@
         transaction_id: transactionId,
         total: formatGBP(quote.total),
       }),
-    }).catch(() => {
-      /* Email notification is best-effort; payment already captured */
-    });
+    }).catch(() => {});
+  }
+
+  function getSdkBaseUrl() {
+    return isSandbox
+      ? 'https://www.sandbox.paypal.com/sdk/js'
+      : 'https://www.paypal.com/sdk/js';
   }
 
   function loadPayPalSdk(clientId) {
@@ -138,10 +165,11 @@
       const script = document.createElement('script');
       script.id = 'paypal-sdk';
       script.src =
-        'https://www.paypal.com/sdk/js?client-id=' +
+        getSdkBaseUrl() +
+        '?client-id=' +
         encodeURIComponent(clientId) +
         '&currency=GBP&intent=capture&components=buttons' +
-        '&enable-funding=card&disable-funding=paylater,venmo';
+        '&enable-funding=card&disable-funding=paypal,paylater,venmo';
       script.onload = resolve;
       script.onerror = reject;
       document.body.appendChild(script);
@@ -151,12 +179,20 @@
   function buildOrderPayload() {
     const values = readFormValues();
     const total = latestQuote.total.toFixed(2);
+    const summary = [
+      values.name,
+      `${values.nights}n ${values.accommodation}`,
+      `${values.adults}a/${values.children}c`,
+    ].join(' · ');
 
     return {
+      intent: 'CAPTURE',
+      payer: buildPayer(values),
       purchase_units: [
         {
-          description: 'KFD 2026 Camping pitch',
-          custom_id: values.email.slice(0, 127),
+          description: 'KFD 2026 camping pitch',
+          invoice_id: 'KFD-' + Date.now().toString(36).toUpperCase(),
+          custom_id: summary.slice(0, 127),
           amount: {
             currency_code: 'GBP',
             value: total,
@@ -165,88 +201,95 @@
       ],
       application_context: {
         shipping_preference: 'NO_SHIPPING',
+        user_action: 'PAY_NOW',
       },
     };
   }
 
-  function renderPayPalButtons() {
-    if (paypalRendered || !window.paypal) return;
-    paypalRendered = true;
+  function parsePayPalError(err) {
+    if (!err) return '';
+    if (typeof err === 'string') return err;
+    return err.message || err.errMsg || err.details?.[0]?.description || '';
+  }
+
+  function sharedCreateOrder(_data, actions) {
+    clearPaymentError();
+
+    if (!latestQuote || !validateForm()) {
+      showPaymentError('Please complete all required fields before paying.');
+      return Promise.reject(new Error('Form incomplete'));
+    }
+
+    return actions.order.create(buildOrderPayload()).catch((err) => {
+      console.error('PayPal createOrder failed:', err);
+      const detail = parsePayPalError(err);
+      showPaymentError(
+        detail
+          ? `Checkout error: ${detail}`
+          : 'Could not start checkout. Please try again or email KFDcamping@outlook.com.'
+      );
+      throw err;
+    });
+  }
+
+  function sharedOnApprove(_data, actions) {
+    return actions.order
+      .capture()
+      .then(async (details) => {
+        const transactionId =
+          details.purchase_units?.[0]?.payments?.captures?.[0]?.id || details.id;
+
+        const values = readFormValues();
+        await notifyOrganiser(values, latestQuote, transactionId);
+
+        const thankYou = config.thankYouUrl || 'thank-you.html';
+        window.location.href = thankYou + '?ref=' + encodeURIComponent(transactionId);
+      })
+      .catch((err) => {
+        console.error('PayPal capture failed:', err);
+        const detail = parsePayPalError(err);
+        showPaymentError(
+          detail
+            ? `Payment failed: ${detail}`
+            : 'Payment could not be confirmed. If money left your account, email KFDcamping@outlook.com.'
+        );
+      });
+  }
+
+  function renderCardButton() {
+    if (buttonsMounted || !window.paypal) return;
+    buttonsMounted = true;
 
     paypal
       .Buttons({
+        fundingSource: paypal.FUNDING.CARD,
         style: {
           layout: 'vertical',
-          color: 'gold',
+          color: 'black',
           shape: 'rect',
           label: 'pay',
+          height: 45,
         },
-
-        onClick(_data, actions) {
-          clearPaymentError();
-          if (!validateForm() || !isBookingOpen()) {
-            form.reportValidity();
-            return actions.reject();
-          }
-          return actions.resolve();
-        },
-
-        createOrder(_data, actions) {
-          if (!latestQuote || !validateForm()) {
-            showPaymentError('Please complete all required fields before paying.');
-            return Promise.reject(new Error('Form incomplete'));
-          }
-
-          return actions.order
-            .create(buildOrderPayload())
-            .catch((err) => {
-              console.error('PayPal createOrder failed:', err);
-              showPaymentError(
-                'Could not start checkout. Check your details and try again, or email KFDcamping@outlook.com.'
-              );
-              throw err;
-            });
-        },
-
-        onApprove(_data, actions) {
-          return actions.order
-            .capture()
-            .then(async (details) => {
-              const transactionId =
-                details.purchase_units?.[0]?.payments?.captures?.[0]?.id ||
-                details.id;
-
-              const values = readFormValues();
-              await notifyOrganiser(values, latestQuote, transactionId);
-
-              const thankYou = config.thankYouUrl || 'thank-you.html';
-              window.location.href =
-                thankYou + '?ref=' + encodeURIComponent(transactionId);
-            })
-            .catch((err) => {
-              console.error('PayPal capture failed:', err);
-              showPaymentError(
-                'Payment could not be confirmed. If money left your account, email KFDcamping@outlook.com with your name and we will sort it.'
-              );
-            });
-        },
-
+        createOrder: sharedCreateOrder,
+        onApprove: sharedOnApprove,
         onCancel() {
           showPaymentError('Payment cancelled — you can try again when ready.');
         },
-
         onError(err) {
-          console.error('PayPal error:', err);
+          console.error('Card payment error:', err);
+          const detail = parsePayPalError(err);
           showPaymentError(
-            'Payment could not be completed. Please try again or email KFDcamping@outlook.com.'
+            detail
+              ? `Payment error: ${detail}`
+              : 'Payment could not be completed. Please try again or email KFDcamping@outlook.com.'
           );
         },
       })
-      .render('#paypal-buttons')
+      .render('#card-button')
       .catch((err) => {
-        console.error('PayPal render failed:', err);
+        console.error('Card button render failed:', err);
         showPaymentError(
-          'PayPal could not load. Check that your Live Client ID is set in js/config.js and that Advanced Card Processing is enabled in your PayPal account.'
+          'Card checkout could not load. Check your Client ID in config.js and that card payments are enabled on your PayPal account.'
         );
       });
   }
@@ -266,6 +309,10 @@
     if (!hasPayPal) {
       configBanner.hidden = false;
       paypalSection.classList.add('is-disabled');
+    } else if (isSandbox) {
+      configBanner.hidden = false;
+      configBanner.textContent =
+        'PayPal is in SANDBOX mode — use sandbox test accounts only. Set paypalEnvironment to "production" for real payments.';
     }
 
     ['input', 'change'].forEach((event) => {
@@ -276,11 +323,11 @@
 
     if (hasPayPal && isBookingOpen()) {
       loadPayPalSdk(clientId)
-        .then(renderPayPalButtons)
+        .then(renderCardButton)
         .catch(() => {
           configBanner.hidden = false;
           configBanner.textContent =
-            'Could not load PayPal. Check your Client ID and internet connection.';
+            'Could not load PayPal SDK. Check Client ID, environment setting, and internet connection.';
         });
     }
   }

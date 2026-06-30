@@ -439,6 +439,10 @@ a:hover {
   pointer-events: none;
 }
 
+#card-button {
+  min-height: 45px;
+}
+
 .paypal-note {
   margin: 0 0 1rem;
   font-size: 0.875rem;

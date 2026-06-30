@@ -6,7 +6,8 @@
  */
 window.KFD_CONFIG = {
   paypalClientId: 'YOUR_PAYPAL_CLIENT_ID',
-  paypalEnvironment: 'sandbox',
+  paypalEnvironment: 'production',
+  paypalBusinessEmail: 'KFDcamping@outlook.com',
 
   organiserEmail: 'KFDcamping@outlook.com',
   bookingDeadline: '2026-07-29',
