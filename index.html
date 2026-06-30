@@ -23,13 +23,16 @@
       <div class="cloud cloud--2"></div>
       <div class="cloud cloud--3"></div>
     </div>
-    <div id="sky-balloons" class="sky-scene__balloons"></div>
+  </div>
+  <div id="balloon-layer" class="balloon-layer is-active" aria-hidden="true">
+    <div id="sky-balloons" class="balloon-layer__inner"></div>
   </div>
   <canvas id="rain-canvas" class="rain-overlay" aria-hidden="true"></canvas>
   <nav class="site-nav" aria-label="Main">
     <div class="site-nav__inner">
       <div class="site-nav__start">
         <a class="site-nav__brand" href="#home">KFD <span>2026</span></a>
+        <button type="button" class="site-nav__contact" id="contact-open">Contact</button>
         <button type="button" class="site-nav__donate" id="donate-open">Donate</button>
       </div>
       <button class="site-nav__toggle" type="button" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Open menu">
@@ -164,7 +167,7 @@
 
         <div id="deadline-banner" class="banner banner--warning" hidden>
           Bookings closed — deadline <strong>29 July</strong> has passed.
-          Email <a href="mailto:KFDcamping@outlook.com">KFDcamping@outlook.com</a>.
+          <button type="button" class="banner__link" id="contact-open-banner">Contact us</button>
         </div>
 
         <div id="config-banner" class="banner banner--info" hidden>
@@ -254,7 +257,7 @@
   <footer class="footer">
     <p>Kingston Fun Day · Community event ·
       <a href="https://www.instagram.com/kfd_kingstonfunday/" target="_blank" rel="noopener">Instagram</a> ·
-      <a href="mailto:KFDcamping@outlook.com">KFDcamping@outlook.com</a>
+      <button type="button" class="footer__contact" id="contact-open-footer">Contact</button>
     </p>
   </footer>
 
@@ -268,7 +271,8 @@
   <div class="theme-bar">
     <div class="theme-bar__buttons">
       <button type="button" class="theme-bar__toggle" id="theme-toggle" aria-label="Switch to sky theme">☀️</button>
-      <button type="button" class="theme-bar__toggle" id="weather-panel-toggle" aria-expanded="false" aria-controls="weather-panel" aria-label="Weather effects" title="Wind & rain">🎈</button>
+      <button type="button" class="theme-bar__toggle" id="balloon-toggle" aria-pressed="true" aria-label="Toggle balloons" title="Balloons">🎈</button>
+      <button type="button" class="theme-bar__toggle" id="weather-panel-toggle" aria-expanded="false" aria-controls="weather-panel" aria-label="Wind and rain" title="Wind &amp; rain">🌬️</button>
     </div>
     <div class="theme-bar__panel" id="weather-panel" hidden>
       <div class="theme-bar__row">
@@ -279,7 +283,32 @@
         <label for="rain-toggle">Rain</label>
         <input type="checkbox" id="rain-toggle" aria-label="Toggle rain">
       </div>
-          <p class="theme-bar__hint">Wind affects sky theme · rain works on any theme · settings saved automatically</p>
+    </div>
+  </div>
+
+  <div id="contact-modal" class="contact-modal" hidden>
+    <div class="contact-modal__backdrop" data-close aria-hidden="true"></div>
+    <div class="contact-modal__panel" role="dialog" aria-modal="true" aria-labelledby="contact-title">
+      <button type="button" class="contact-modal__close" aria-label="Close contact form">&times;</button>
+      <h2 id="contact-title" class="contact-modal__title">Get in touch</h2>
+      <p class="contact-modal__lead">Camping, lineup, or general enquiries — we'll get back to you as soon as we can.</p>
+      <form id="contact-form" class="contact-form" novalidate>
+        <div class="field-row">
+          <label for="contact-name">Your name <span aria-hidden="true">*</span></label>
+          <input type="text" id="contact-name" name="name" required autocomplete="name">
+        </div>
+        <div class="field-row">
+          <label for="contact-email">Email <span aria-hidden="true">*</span></label>
+          <input type="email" id="contact-email" name="email" required autocomplete="email">
+        </div>
+        <div class="field-row">
+          <label for="contact-message">Message <span aria-hidden="true">*</span></label>
+          <textarea id="contact-message" name="message" rows="4" required placeholder="How can we help?"></textarea>
+        </div>
+        <p id="contact-error" class="field-error payment-error" role="alert" hidden></p>
+        <p id="contact-success" class="contact-modal__success" hidden>Thanks — your message has been sent.</p>
+        <button type="submit" class="btn btn--primary contact-form__submit">Send message</button>
+      </form>
     </div>
   </div>
 
@@ -319,6 +348,7 @@
   <script src="js/site.js" defer></script>
   <script src="js/app.js" defer></script>
   <script src="js/donate.js" defer></script>
+  <script src="js/contact.js" defer></script>
   <script src="js/sky.js" defer></script>
 </body>
 </html>

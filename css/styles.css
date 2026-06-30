@@ -561,7 +561,8 @@ a:hover {
 }
 
 /* ——— Donate modal ——— */
-body.donate-open {
+body.donate-open,
+body.contact-open {
   overflow: hidden;
 }
 
@@ -705,6 +706,125 @@ body.donate-open {
 
 #donate-card-button {
   min-height: 45px;
+}
+
+/* ——— Contact modal ——— */
+.contact-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.contact-modal[hidden] {
+  display: none;
+}
+
+.contact-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.contact-modal__panel {
+  position: relative;
+  width: min(440px, 100%);
+  max-height: min(90vh, 640px);
+  overflow-y: auto;
+  padding: 1.75rem 1.5rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+}
+
+.contact-modal__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(128, 128, 128, 0.15);
+  color: var(--text);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.contact-modal__title {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  letter-spacing: 0.05em;
+}
+
+.contact-modal__lead {
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.contact-form__submit {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.contact-modal__success {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  background: rgba(57, 255, 20, 0.1);
+  border: 1px solid rgba(57, 255, 20, 0.25);
+  color: var(--green);
+  font-weight: 600;
+}
+
+.banner__link,
+.footer__contact,
+.thank-you__contact-btn {
+  padding: 0;
+  font: inherit;
+  color: var(--pink);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.banner__link:hover,
+.footer__contact:hover,
+.thank-you__contact-btn:hover {
+  filter: brightness(1.1);
+}
+
+.site-nav__contact {
+  flex-shrink: 0;
+  padding: 0.35rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.site-nav__contact:hover {
+  border-color: var(--pink);
+  background: rgba(255, 45, 138, 0.08);
+}
+
+[data-theme="sky"] .site-nav__contact {
+  background: rgba(255, 255, 255, 0.55);
 }
 
 /* ——— Site nav ——— */
@@ -858,7 +978,8 @@ body.donate-open {
     padding: 0.75rem;
   }
 
-  .site-nav__donate {
+  .site-nav__donate,
+  .site-nav__contact {
     padding: 0.3rem 0.6rem;
     font-size: 0.72rem;
   }
@@ -1308,9 +1429,11 @@ body.lightbox-open {
 
 /* ——— Fixed overlays (must stay viewport-fixed) ——— */
 body > .donate-modal,
+body > .contact-modal,
 body > .lightbox,
 body > .theme-bar,
 body > .rain-overlay,
+body > .balloon-layer,
 body > .sky-scene {
   position: fixed;
 }
@@ -1407,12 +1530,6 @@ body > .sky-scene {
   width: 18px;
   height: 18px;
   accent-color: var(--blue);
-}
-
-.theme-bar__hint {
-  margin: 0.5rem 0 0;
-  font-size: 0.75rem;
-  color: var(--text-muted);
 }
 
 @media (max-width: 480px) {

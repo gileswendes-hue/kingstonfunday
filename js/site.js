@@ -134,6 +134,21 @@
   }
 
   /* ——— Lineup ——— */
+  function bandAccentVars(accent) {
+    const readable = isLightAccent(accent) ? '#1e3a5f' : accent;
+    return `--band-accent: ${accent}; --band-accent-readable: ${readable}`;
+  }
+
+  function isLightAccent(hex) {
+    if (!hex || hex.toLowerCase() === '#ffffff' || hex.toLowerCase() === '#fff') return true;
+    const raw = hex.replace('#', '');
+    if (raw.length !== 6) return false;
+    const r = parseInt(raw.slice(0, 2), 16);
+    const g = parseInt(raw.slice(2, 4), 16);
+    const b = parseInt(raw.slice(4, 6), 16);
+    return (r * 299 + g * 587 + b * 114) / 1000 > 180;
+  }
+
   function initLineup() {
     const grid = document.getElementById('lineup-grid');
     const bands = window.KFD_BANDS || [];
@@ -154,7 +169,7 @@
         return `
           <article
             class="band-card reveal${band.featured ? ' band-card--featured' : ''}"
-            style="--band-accent: ${band.accent}"
+            style="${bandAccentVars(band.accent)}"
             tabindex="0"
             role="button"
             aria-expanded="false"

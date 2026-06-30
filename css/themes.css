@@ -113,6 +113,15 @@
   background: var(--bg-card-solid);
 }
 
+[data-theme="sky"] .band-card__name {
+  color: var(--band-accent-readable, var(--band-accent, var(--text)));
+  text-shadow: none;
+}
+
+[data-theme="sky"] .band-card__front {
+  background: var(--bg-card-solid);
+}
+
 [data-theme="sky"] .btn--ghost {
   color: var(--text);
   border-color: var(--border);
@@ -142,8 +151,43 @@ body > footer {
   z-index: 1;
 }
 
-.sky-scene__clouds,
-.sky-scene__balloons {
+.sky-scene__clouds {
+  position: absolute;
+  inset: 0;
+}
+
+/* ——— Balloon layer (both themes) ——— */
+.balloon-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.balloon-layer.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+[data-theme="sky"] .balloon-layer {
+  z-index: 2;
+}
+
+[data-theme="dark"] .balloon-layer,
+:root:not([data-theme="sky"]) .balloon-layer {
+  z-index: 55;
+}
+
+[data-theme="dark"] .balloon__body,
+:root:not([data-theme="sky"]) .balloon__body {
+  filter: saturate(1.12) brightness(1.08);
+}
+
+.balloon-layer__inner {
   position: absolute;
   inset: 0;
 }
@@ -249,13 +293,24 @@ body > footer {
 
 .balloon {
   position: absolute;
-  bottom: -120px;
+  bottom: -160px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  pointer-events: auto;
+  cursor: pointer;
   animation: balloon-rise var(--rise-dur, 28s) linear infinite;
   animation-delay: var(--rise-delay, 0s);
   will-change: transform;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.18));
+}
+
+.balloon:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 4px;
 }
 
 .balloon__body {
@@ -302,6 +357,26 @@ body > footer {
 @keyframes string-sway {
   from { transform: rotate(calc(var(--swing, 10deg) * -1.2)); }
   to { transform: rotate(calc(var(--swing, 10deg) * 1.2)); }
+}
+
+@keyframes balloon-pop {
+  0% { transform: scale(1); opacity: 1; }
+  35% { transform: scale(1.25); opacity: 0.9; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+
+.balloon.is-popping {
+  animation: balloon-pop 0.48s ease-out forwards !important;
+  pointer-events: none;
+}
+
+.balloon.is-popping .balloon__body,
+.balloon.is-popping .balloon__string {
+  animation: none !important;
+}
+
+.theme-bar__toggle.is-active {
+  box-shadow: 0 0 0 2px var(--pink), 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* Camping section gap (red line on mockup) */
