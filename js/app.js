@@ -159,19 +159,29 @@
 
   function loadPayPalSdk(clientId) {
     return new Promise((resolve, reject) => {
+      if (window.paypal?.Buttons) {
+        resolve();
+        return;
+      }
+
       const existing = document.getElementById('paypal-sdk');
       if (existing) existing.remove();
 
       const script = document.createElement('script');
       script.id = 'paypal-sdk';
+      // Do not disable "paypal" here — PayPal returns HTTP 400 and the SDK won't load.
+      // Card-only checkout is enforced via fundingSource: paypal.FUNDING.CARD below.
       script.src =
         getSdkBaseUrl() +
         '?client-id=' +
         encodeURIComponent(clientId) +
         '&currency=GBP&intent=capture&components=buttons' +
-        '&enable-funding=card&disable-funding=paypal,paylater,venmo';
-      script.onload = resolve;
-      script.onerror = reject;
+        '&enable-funding=card&disable-funding=paylater,venmo';
+      script.onload = () => {
+        if (window.paypal?.Buttons) resolve();
+        else reject(new Error('PayPal SDK loaded but paypal object is missing'));
+      };
+      script.onerror = () => reject(new Error('PayPal SDK script failed to load'));
       document.body.appendChild(script);
     });
   }
@@ -186,7 +196,6 @@
     ].join(' · ');
 
     return {
-      intent: 'CAPTURE',
       payer: buildPayer(values),
       purchase_units: [
         {
@@ -324,10 +333,11 @@
     if (hasPayPal && isBookingOpen()) {
       loadPayPalSdk(clientId)
         .then(renderCardButton)
-        .catch(() => {
+        .catch((err) => {
+          console.error('PayPal SDK load failed:', err);
           configBanner.hidden = false;
           configBanner.textContent =
-            'Could not load PayPal SDK. Check Client ID, environment setting, and internet connection.';
+            'Card checkout could not load. Check your Live Client ID in js/config.js matches paypalEnvironment: "production".';
         });
     }
   }
