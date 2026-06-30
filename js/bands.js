@@ -7,6 +7,7 @@ window.KFD_BANDS = [
     featured: true,
     accent: '#39ff14',
     links: [
+      { label: 'facebook', url: ' https://www.facebook.com/horcedivorseuk' },
       { label: 'Website', url: 'https://www.horcedivorse.com/' },
       { label: 'Spotify', url: 'https://open.spotify.com/artist/5iDawukTsOGn3RGwLouU5m' },
       { label: 'Bandcamp', url: 'https://horcedivorse.bandcamp.com/' },
@@ -17,7 +18,9 @@ window.KFD_BANDS = [
     name: '500 Hojus',
     style: 'Live music',
     accent: '#ffffff',
-    links: [],
+    links: [
+      { label: 'facebook', url: 'https://www.facebook.com/vickypark1989' }, 
+    ],
   },
   {
     id: 'all-for-jolly-duo',
@@ -25,8 +28,9 @@ window.KFD_BANDS = [
     style: 'Cornish folk punk',
     accent: '#ffffff',
     links: [
+      { label: 'facebook', url: 'https://www.facebook.com/allforjolly' },
       { label: 'Website', url: 'https://allforjolly.com/' },
-      { label: 'Facebook', url: 'https://www.facebook.com/allforjolly' },
+      
     ],
   },
   {
@@ -34,35 +38,45 @@ window.KFD_BANDS = [
     name: 'Vardo Manor',
     style: 'Funk · rock · reggae',
     accent: '#ffb347',
-    links: [],
+    links: [
+    { label: 'facebook', url: 'https://www.facebook.com/profile.php?id=61562694460144' },  
+    ],
   },
   {
     id: 'empire-blind',
     name: 'Empire Blind',
     style: 'Rock · Plymouth',
     accent: '#ff4d4d',
-    links: [{ label: 'Bandcamp', url: 'https://empireblind.bandcamp.com/' }],
+    links: [
+      { label: 'facebook', url: 'https://www.facebook.com/profile.php?id=61564948893456' },
+      { label: 'Bandcamp', url: 'https://empireblind.bandcamp.com/' }],
   },
   {
     id: 'phoenix-proposal',
     name: 'The Phoenix Proposal',
     style: 'Blues · rock · soul',
     accent: '#4dd0ff',
-    links: [],
+    links: [
+      { label: 'facebook', url: 'https://www.facebook.com/profile.php?id=61571738420065' },
+    ],
   },
   {
     id: 'iris',
     name: 'IRIS',
     style: 'Live music',
     accent: '#ff2d8a',
-    links: [],
+    links: [
+       { label: 'facebook', url: 'https://www.facebook.com/profile.php?id=100072315998797' },
+    ],
   },
   {
     id: 'fret-level-midnight',
     name: 'Fret Level Midnight',
     style: 'Live music',
     accent: '#ffffff',
-    links: [],
+    links: [
+      { label: 'facebook', url: 'https://www.facebook.com/profile.php?id=61575780505547' },
+    ],
   },
   {
     id: 'yeoland',
