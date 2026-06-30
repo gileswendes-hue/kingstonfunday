@@ -11,7 +11,7 @@
   const deadlineBanner = document.getElementById('deadline-banner');
   const configBanner = document.getElementById('config-banner');
   const paypalSection = document.getElementById('paypal-section');
-  const paypalButtonsEl = document.getElementById('paypal-buttons');
+  const paymentError = document.getElementById('payment-error');
 
   let latestQuote = null;
   let paypalRendered = false;
@@ -20,6 +20,18 @@
     if (!config.bookingDeadline) return true;
     const deadline = new Date(config.bookingDeadline + 'T23:59:59');
     return Date.now() <= deadline.getTime();
+  }
+
+  function showPaymentError(message) {
+    if (!paymentError) return;
+    paymentError.textContent = message;
+    paymentError.hidden = false;
+  }
+
+  function clearPaymentError() {
+    if (!paymentError) return;
+    paymentError.hidden = true;
+    paymentError.textContent = '';
   }
 
   function readFormValues() {
@@ -128,87 +140,115 @@
       script.src =
         'https://www.paypal.com/sdk/js?client-id=' +
         encodeURIComponent(clientId) +
-        '&currency=GBP&intent=capture&components=buttons';
+        '&currency=GBP&intent=capture&components=buttons' +
+        '&enable-funding=card&disable-funding=paylater,venmo';
       script.onload = resolve;
       script.onerror = reject;
       document.body.appendChild(script);
     });
   }
 
+  function buildOrderPayload() {
+    const values = readFormValues();
+    const total = latestQuote.total.toFixed(2);
+
+    return {
+      purchase_units: [
+        {
+          description: 'KFD 2026 Camping pitch',
+          custom_id: values.email.slice(0, 127),
+          amount: {
+            currency_code: 'GBP',
+            value: total,
+          },
+        },
+      ],
+      application_context: {
+        shipping_preference: 'NO_SHIPPING',
+      },
+    };
+  }
+
   function renderPayPalButtons() {
     if (paypalRendered || !window.paypal) return;
     paypalRendered = true;
 
-    paypal.Buttons({
-      style: {
-        layout: 'vertical',
-        color: 'gold',
-        shape: 'rect',
-        label: 'pay',
-      },
+    paypal
+      .Buttons({
+        style: {
+          layout: 'vertical',
+          color: 'gold',
+          shape: 'rect',
+          label: 'pay',
+        },
 
-      onClick(_data, actions) {
-        if (!validateForm() || !isBookingOpen()) {
-          form.reportValidity();
-          return actions.reject();
-        }
-        return actions.resolve();
-      },
+        onClick(_data, actions) {
+          clearPaymentError();
+          if (!validateForm() || !isBookingOpen()) {
+            form.reportValidity();
+            return actions.reject();
+          }
+          return actions.resolve();
+        },
 
-      createOrder() {
-        if (!latestQuote || !validateForm()) {
-          return Promise.reject(new Error('Please complete the form'));
-        }
+        createOrder(_data, actions) {
+          if (!latestQuote || !validateForm()) {
+            showPaymentError('Please complete all required fields before paying.');
+            return Promise.reject(new Error('Form incomplete'));
+          }
 
-        const values = readFormValues();
-        const description = [
-          'KFD 2026 Camping',
-          values.accommodation,
-          `${values.nights} night(s)`,
-          `${values.adults} adult(s), ${values.children} child(ren)`,
-        ].join(' · ');
+          return actions.order
+            .create(buildOrderPayload())
+            .catch((err) => {
+              console.error('PayPal createOrder failed:', err);
+              showPaymentError(
+                'Could not start checkout. Check your details and try again, or email KFDcamping@outlook.com.'
+              );
+              throw err;
+            });
+        },
 
-        return paypal.actions.order.create({
-          purchase_units: [
-            {
-              description,
-              amount: {
-                currency_code: 'GBP',
-                value: latestQuote.total.toFixed(2),
-                breakdown: {
-                  item_total: {
-                    currency_code: 'GBP',
-                    value: latestQuote.total.toFixed(2),
-                  },
-                },
-              },
-            },
-          ],
-          application_context: {
-            shipping_preference: 'NO_SHIPPING',
-          },
-        });
-      },
+        onApprove(_data, actions) {
+          return actions.order
+            .capture()
+            .then(async (details) => {
+              const transactionId =
+                details.purchase_units?.[0]?.payments?.captures?.[0]?.id ||
+                details.id;
 
-      onApprove(data) {
-        return paypal.actions.order.capture(data.orderID).then(async (details) => {
-          const transactionId =
-            details.purchase_units?.[0]?.payments?.captures?.[0]?.id ||
-            data.orderID;
+              const values = readFormValues();
+              await notifyOrganiser(values, latestQuote, transactionId);
 
-          const values = readFormValues();
-          await notifyOrganiser(values, latestQuote, transactionId);
+              const thankYou = config.thankYouUrl || 'thank-you.html';
+              window.location.href =
+                thankYou + '?ref=' + encodeURIComponent(transactionId);
+            })
+            .catch((err) => {
+              console.error('PayPal capture failed:', err);
+              showPaymentError(
+                'Payment could not be confirmed. If money left your account, email KFDcamping@outlook.com with your name and we will sort it.'
+              );
+            });
+        },
 
-          const thankYou = config.thankYouUrl || 'thank-you.html';
-          window.location.href = thankYou + '?ref=' + encodeURIComponent(transactionId);
-        });
-      },
+        onCancel() {
+          showPaymentError('Payment cancelled — you can try again when ready.');
+        },
 
-      onError(err) {
-        console.error('PayPal error:', err);
-        alert('Payment could not be completed. Please try again or email KFDcamping@outlook.com.');
-      },
-    }).render('#paypal-buttons');
+        onError(err) {
+          console.error('PayPal error:', err);
+          showPaymentError(
+            'Payment could not be completed. Please try again or email KFDcamping@outlook.com.'
+          );
+        },
+      })
+      .render('#paypal-buttons')
+      .catch((err) => {
+        console.error('PayPal render failed:', err);
+        showPaymentError(
+          'PayPal could not load. Check that your Live Client ID is set in js/config.js and that Advanced Card Processing is enabled in your PayPal account.'
+        );
+      });
   }
 
   function init() {
@@ -239,7 +279,8 @@
         .then(renderPayPalButtons)
         .catch(() => {
           configBanner.hidden = false;
-          configBanner.textContent = 'Could not load PayPal. Check your Client ID and internet connection.';
+          configBanner.textContent =
+            'Could not load PayPal. Check your Client ID and internet connection.';
         });
     }
   }
