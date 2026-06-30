@@ -1,5 +1,5 @@
 window.KFD_CONFIG = window.KFD_CONFIG || {
-  paypalClientId: 'AaT8ff9uNbqydR93_F_9DiHDTL-yksk8o3hgZf9uvukT7Pj7GRkLotS27a_p5EEqDXK9tZKREld7gVk6',
+  paypalClientId: 'ASlcqV_FulbImg3novoOiWpvIH1Ce-TjjmvqGvuFI2Tn9wtK5Jbxr9XFf6YCTgO_Ga4YSbTXpaJ0WtGM',
   paypalEnvironment: 'production',
   paypalBusinessEmail: 'KFDcamping@outlook.com',
 
