@@ -259,7 +259,10 @@
       sessionStorage.setItem('kfd-booking-' + transactionId, JSON.stringify(record));
     } catch (_) {}
 
-    await window.KFD_SHEET.log(record);
+    await Promise.all([
+      window.KFD_SHEET.log(record),
+      window.KFD_NOTIFY.sendCustomerConfirmation(record).catch(() => false),
+    ]);
   }
 
 
@@ -561,7 +564,7 @@
 
 
 
-    if (hasPayPal && !(config.bookingSheetUrl || '').trim() && sheetBanner) {
+    if (hasPayPal && (!(config.bookingSheetUrl || '').trim() || !(config.bookingSheetSecret || '').trim()) && sheetBanner) {
 
       sheetBanner.hidden = false;
 
