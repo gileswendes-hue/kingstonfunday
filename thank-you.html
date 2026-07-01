@@ -10,11 +10,16 @@
   <meta name="theme-color" content="#0a0a0f">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/themes.css">
 </head>
 <body>
+  <div id="ceefax-bar" class="ceefax-bar" hidden aria-hidden="true">
+    <span class="ceefax-bar__page">P100</span>
+    <span class="ceefax-bar__title">KINGSTON FUN DAY</span>
+    <span class="ceefax-bar__brand">CEEFAX</span>
+  </div>
   <div id="sky-scene" class="sky-scene" aria-hidden="true">
     <div class="sky-scene__clouds">
       <div class="cloud cloud--1"></div>
@@ -49,8 +54,9 @@
       <p class="thank-you__lead">Your camping booking payment was successful.</p>
       <p id="thank-you-donation-extra" class="thank-you__lead" hidden>Your support helps keep Kingston Fun Day going for the village.</p>
       <p class="thank-you__camping-only">We will post your camping passes and wristbands to the address you provided before the event.</p>
+      <p class="thank-you__camping-only">A confirmation email has been sent to the address you provided.</p>
       <p id="reference-line" class="thank-you__ref" hidden>Payment reference: <strong id="paypal-ref"></strong></p>
-      <p class="thank-you__camping-only">Arrive from <strong>4:00 PM on Friday 2 August</strong>. Depart by <strong>11:00 AM on Sunday 4 August</strong>.</p>
+      <p class="thank-you__camping-only">Arrive from <strong>4:00pm on Friday 31 July</strong>. Depart by <strong>11:00am on Sunday 2 August</strong>.</p>
       <a class="btn btn--primary" href="index.html">Back to KFD</a>
       <p class="thank-you__contact">Questions? <button type="button" class="thank-you__contact-btn" id="contact-open-thanks">Contact us</button></p>
     </div>
@@ -126,6 +132,7 @@
 
   <script src="js/config.js"></script>
   <script src="js/sheet-log.js"></script>
+  <script src="js/notify.js"></script>
   <script src="js/paypal-shared.js"></script>
   <script src="js/sky.js" defer></script>
   <script src="js/donate.js" defer></script>
