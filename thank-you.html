@@ -44,7 +44,13 @@
           <img class="site-nav__logo" src="images/2026_logo.jpg" alt="" width="44" height="44">
           KFD <span>2026</span>
         </a>
-        <button type="button" class="site-nav__contact" id="contact-open">Contact</button>
+        <button type="button" class="site-nav__contact" id="contact-open" aria-label="Contact">
+          <span class="site-nav__contact-label">Contact</span>
+          <svg class="site-nav__contact-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="m5 7 7 6 7-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
         <button type="button" class="site-nav__donate" id="donate-open">Donate</button>
       </div>
       <div class="site-nav__tools">
