@@ -244,21 +244,23 @@
               </div>
 
               <div class="pitch-people">
-                <label class="pitch-people__slider">
-                  <span>Adults (17+)</span>
-                  <input type="range" id="adults-slider" min="1" max="18" value="1">
-                  <output id="adults-out">1</output>
-                </label>
+                <div class="pitch-control">
+                  <span class="pitch-control__label">Adults (17+)</span>
+                  <div class="pitch-control__row">
+                    <input type="range" id="adults-slider" min="1" max="18" value="1">
+                    <output class="pitch-control__num" id="adults-out" for="adults-slider">1</output>
+                  </div>
+                </div>
                 <div class="pitch-people__row">
-                  <label class="pitch-people__slider">
-                    <span>Children (under 16)</span>
-                    <input type="range" id="children-slider" min="0" max="18" value="0">
-                    <output id="children-out">0</output>
-                  </label>
-                  <label class="pitch-dogs__field">
-                    <span>Dogs</span>
-                    <input type="number" id="dogs-input" name="dogs" min="0" max="6" value="0" inputmode="numeric">
-                  </label>
+                  <div class="pitch-control">
+                    <span class="pitch-control__label">Children (under 16)</span>
+                    <div class="pitch-control__row">
+                      <input type="range" id="children-slider" min="0" max="18" value="0">
+                      <output class="pitch-control__num" id="children-out" for="children-slider">0</output>
+                    </div>
+                  </div>
+                  <span class="pitch-control__label pitch-control__label--dogs">Dogs</span>
+                  <input type="number" class="pitch-control__num pitch-control__num--input pitch-control__num--dogs" id="dogs-input" name="dogs" min="0" max="6" value="0" inputmode="numeric" aria-label="Number of dogs">
                 </div>
               </div>
             </div>
