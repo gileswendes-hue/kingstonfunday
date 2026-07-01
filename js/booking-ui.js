@@ -51,26 +51,70 @@
   }
 
   function personScale(count) {
-    if (count <= 1) return 0.88;
-    if (count <= 2) return 0.78;
-    if (count <= 4) return 0.64;
-    return 0.52;
+    if (count <= 1) return 0.78;
+    if (count <= 2) return 0.68;
+    if (count <= 4) return 0.54;
+    return 0.44;
   }
 
-  function personSvg(type, x, y, scale) {
-    const s = scale * (type === 'child' ? 0.88 : 1);
-    const sw = 1.2;
+  const TENT_POSITIONS = {
+    1: [[40, 38]],
+    2: [[31, 36], [49, 36]],
+    3: [[26, 34], [40, 38], [54, 34]],
+    4: [[24, 32], [34, 36], [46, 36], [56, 32]],
+    5: [[22, 31], [31, 35], [40, 39], [49, 35], [58, 31]],
+    6: [[21, 30], [29, 34], [37, 38], [45, 38], [53, 34], [59, 30]],
+  };
+
+  const VAN_POSITIONS = {
+    1: [[36, 22]],
+    2: [[27, 22], [45, 22]],
+    3: [[23, 21], [36, 23], [49, 21]],
+    4: [[21, 20], [30, 23], [42, 23], [51, 20]],
+    5: [[19, 19], [27, 22], [36, 24], [45, 22], [53, 19]],
+    6: [[19, 19], [26, 21], [33, 24], [39, 24], [46, 21], [53, 19]],
+  };
+
+  function positionsFor(count, map) {
+    if (map[count]) return map[count];
+    return map[6].slice(0, count);
+  }
+
+  function adultSvg(x, y, crowdScale) {
+    const s = crowdScale;
+    const sw = 1.25;
     return (
-      `<g class="pitch-person pitch-person--${type}" transform="translate(${x} ${y}) scale(${s.toFixed(2)})">` +
-      `<circle cx="0" cy="-4" r="2.2" fill="none" stroke="${STROKE}" stroke-width="${sw}"/>` +
-      `<line x1="0" y1="-1.8" x2="0" y2="5" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
-      `<line x1="0" y1="0.5" x2="-2.8" y2="4" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
-      `<line x1="0" y1="0.5" x2="2.8" y2="4" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
+      `<g class="pitch-person pitch-person--adult" transform="translate(${x} ${y}) scale(${s.toFixed(2)})">` +
+      `<circle cx="0" cy="-6" r="3" fill="none" stroke="${STROKE}" stroke-width="${sw}"/>` +
+      `<line x1="0" y1="-3" x2="0" y2="7" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
+      `<line x1="0" y1="-0.5" x2="-3.8" y2="5" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
+      `<line x1="0" y1="-0.5" x2="3.8" y2="5" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
+      `<line x1="0" y1="7" x2="-2.6" y2="11.5" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
+      `<line x1="0" y1="7" x2="2.6" y2="11.5" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
       '</g>'
     );
   }
 
-  function layoutPeople(adults, children, bounds) {
+  function childSvg(x, y, crowdScale) {
+    const s = crowdScale * 0.38;
+    const sw = 1.05;
+    return (
+      `<g class="pitch-person pitch-person--child" transform="translate(${x} ${y}) scale(${s.toFixed(2)})">` +
+      `<circle cx="0" cy="-5" r="2.4" fill="none" stroke="${STROKE}" stroke-width="${sw}"/>` +
+      `<line x1="0" y1="-2.6" x2="0" y2="6" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
+      `<line x1="0" y1="0" x2="-3.2" y2="4.5" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
+      `<line x1="0" y1="0" x2="3.2" y2="4.5" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
+      `<line x1="0" y1="6" x2="-2" y2="9.5" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
+      `<line x1="0" y1="6" x2="2" y2="9.5" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
+      '</g>'
+    );
+  }
+
+  function personSvg(type, x, y, crowdScale) {
+    return type === 'child' ? childSvg(x, y, crowdScale) : adultSvg(x, y, crowdScale);
+  }
+
+  function layoutPeople(adults, children, positionMap) {
     const slots = [];
     for (let i = 0; i < adults; i++) slots.push('adult');
     for (let i = 0; i < children; i++) slots.push('child');
@@ -78,20 +122,12 @@
 
     const count = slots.length;
     const scale = personScale(count);
-    const cols = count <= 3 ? count : count <= 4 ? 2 : 3;
-    const rows = Math.ceil(count / cols);
-    const padX = bounds.width * 0.12;
-    const padY = bounds.height * 0.1;
-    const cellW = (bounds.width - padX * 2) / cols;
-    const cellH = (bounds.height - padY * 2) / rows;
+    const coords = positionsFor(count, positionMap);
 
     return slots
       .map((type, i) => {
-        const col = i % cols;
-        const row = Math.floor(i / cols);
-        const x = bounds.x + padX + cellW * col + cellW / 2;
-        const y = bounds.y + padY + cellH * row + cellH * 0.62;
-        return personSvg(type, x.toFixed(1), y.toFixed(1), scale);
+        const [x, y] = coords[i] || coords[coords.length - 1];
+        return personSvg(type, x, y, scale);
       })
       .join('');
   }
@@ -114,16 +150,27 @@
   function tentUnit(adults, children, index, total) {
     const uid = ++unitUid;
     const clipId = `tent-clip-${uid}`;
-    const people = layoutPeople(adults, children, { x: 12, y: 22, width: 56, height: 24 });
+    const glowId = `tent-glow-${uid}`;
+    const people = layoutPeople(adults, children, TENT_POSITIONS);
     const label = total > 1 ? `Pitch ${index + 1}` : '';
 
     return (
       `<figure class="pitch-unit pitch-unit--tent" aria-label="${label || 'Tent pitch'}">` +
       (label ? `<figcaption class="pitch-unit__label">${label}</figcaption>` : '') +
-      `<svg class="pitch-unit__svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 62" aria-hidden="true">` +
-      `<defs><clipPath id="${clipId}"><polygon points="40,12 70,50 10,50"/></clipPath></defs>` +
-      `<polygon class="pitch-unit__shell" points="40,10 72,50 8,50" fill="none" stroke="${STROKE}" stroke-width="1.6" stroke-linejoin="round"/>` +
-      `<line x1="40" y1="10" x2="40" y2="50" stroke="${STROKE}" stroke-width="1" opacity="0.45"/>` +
+      `<svg class="pitch-unit__svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84 62" aria-hidden="true">` +
+      `<defs>` +
+      `<clipPath id="${clipId}"><polygon points="42,16 66,48 18,48"/></clipPath>` +
+      `<filter id="${glowId}" x="-20%" y="-20%" width="140%" height="140%">` +
+      `<feDropShadow dx="0" dy="0" stdDeviation="1.2" flood-color="#ff8c42" flood-opacity="0.65"/>` +
+      `</filter></defs>` +
+      `<polygon points="42,14 68,48 16,48" fill="rgba(255,140,66,0.08)"/>` +
+      `<polygon class="pitch-unit__shell pitch-unit__glow" filter="url(#${glowId})" points="42,12 70,48 14,48" fill="none" stroke="${STROKE}" stroke-width="1.8" stroke-linejoin="round"/>` +
+      `<line x1="42" y1="12" x2="42" y2="48" stroke="${STROKE}" stroke-width="1" opacity="0.3"/>` +
+      `<path d="M34 48 Q42 42 50 48" fill="none" stroke="${STROKE}" stroke-width="1.1" opacity="0.55"/>` +
+      `<line x1="14" y1="48" x2="70" y2="48" stroke="${STROKE}" stroke-width="1.3" opacity="0.5"/>` +
+      `<line x1="16" y1="48" x2="14" y2="52" stroke="${STROKE}" stroke-width="1" opacity="0.45"/>` +
+      `<line x1="68" y1="48" x2="70" y2="52" stroke="${STROKE}" stroke-width="1" opacity="0.45"/>` +
+      `<line x1="42" y1="48" x2="42" y2="52" stroke="${STROKE}" stroke-width="0.9" opacity="0.35"/>` +
       `<g clip-path="url(#${clipId})">${people}</g>` +
       '</svg></figure>'
     );
@@ -132,19 +179,32 @@
   function vanUnit(adults, children, index, total) {
     const uid = ++unitUid;
     const clipId = `van-clip-${uid}`;
-    const people = layoutPeople(adults, children, { x: 12, y: 14, width: 52, height: 16 });
+    const glowId = `van-glow-${uid}`;
+    const people = layoutPeople(adults, children, VAN_POSITIONS);
     const label = total > 1 ? `Pitch ${index + 1}` : '';
 
     return (
       `<figure class="pitch-unit pitch-unit--van" aria-label="${label || 'Campervan pitch'}">` +
       (label ? `<figcaption class="pitch-unit__label">${label}</figcaption>` : '') +
-      `<svg class="pitch-unit__svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 50" aria-hidden="true">` +
-      `<defs><clipPath id="${clipId}"><rect x="12" y="14" width="52" height="18" rx="2"/></clipPath></defs>` +
-      `<rect class="pitch-unit__shell" x="8" y="12" width="58" height="22" rx="3" fill="none" stroke="${STROKE}" stroke-width="1.6"/>` +
-      `<path d="M66 14 h10 v18 h-10 z" fill="none" stroke="${STROKE}" stroke-width="1.4"/>` +
-      `<line x1="72" y1="18" x2="72" y2="28" stroke="${STROKE}" stroke-width="1" opacity="0.45"/>` +
-      `<circle cx="22" cy="36" r="3.5" fill="none" stroke="${STROKE}" stroke-width="1.2"/>` +
-      `<circle cx="54" cy="36" r="3.5" fill="none" stroke="${STROKE}" stroke-width="1.2"/>` +
+      `<svg class="pitch-unit__svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 92 54" aria-hidden="true">` +
+      `<defs>` +
+      `<clipPath id="${clipId}"><rect x="15" y="15" width="50" height="17" rx="2"/></clipPath>` +
+      `<filter id="${glowId}" x="-15%" y="-15%" width="130%" height="130%">` +
+      `<feDropShadow dx="0" dy="0" stdDeviation="1.1" flood-color="#ff8c42" flood-opacity="0.6"/>` +
+      `</filter></defs>` +
+      `<rect x="10" y="13" width="56" height="22" rx="3.5" fill="rgba(255,140,66,0.08)"/>` +
+      `<rect class="pitch-unit__shell pitch-unit__glow" filter="url(#${glowId})" x="8" y="12" width="58" height="24" rx="3.5" fill="none" stroke="${STROKE}" stroke-width="1.8"/>` +
+      `<path d="M66 14 h14 v20 h-14 z" fill="rgba(255,140,66,0.06)" stroke="${STROKE}" stroke-width="1.4"/>` +
+      `<path d="M69 16 L81 23 L81 31 L69 31 Z" fill="none" stroke="${STROKE}" stroke-width="1" opacity="0.6"/>` +
+      `<line x1="75" y1="19" x2="75" y2="30" stroke="${STROKE}" stroke-width="0.8" opacity="0.35"/>` +
+      `<rect x="18" y="18" width="8" height="6" rx="1" fill="none" stroke="${STROKE}" stroke-width="0.8" opacity="0.35"/>` +
+      `<rect x="28" y="18" width="8" height="6" rx="1" fill="none" stroke="${STROKE}" stroke-width="0.8" opacity="0.35"/>` +
+      `<line x1="18" y1="26" x2="58" y2="26" stroke="${STROKE}" stroke-width="0.7" opacity="0.25"/>` +
+      `<circle cx="24" cy="39" r="3.8" fill="none" stroke="${STROKE}" stroke-width="1.2"/>` +
+      `<circle cx="56" cy="39" r="3.8" fill="none" stroke="${STROKE}" stroke-width="1.2"/>` +
+      `<circle cx="24" cy="39" r="1.2" fill="none" stroke="${STROKE}" stroke-width="0.7" opacity="0.5"/>` +
+      `<circle cx="56" cy="39" r="1.2" fill="none" stroke="${STROKE}" stroke-width="0.7" opacity="0.5"/>` +
+      `<line x1="8" y1="37" x2="82" y2="37" stroke="${STROKE}" stroke-width="0.9" opacity="0.25"/>` +
       `<g clip-path="url(#${clipId})">${people}</g>` +
       '</svg></figure>'
     );
