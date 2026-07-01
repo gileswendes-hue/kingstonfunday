@@ -1177,6 +1177,16 @@ body.terms-open {
   transition: border-color 0.15s, background 0.15s;
 }
 
+.site-nav__contact-icon {
+  display: none;
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.site-nav__contact-label {
+  display: inline;
+}
+
 .site-nav__contact:hover {
   border-color: var(--pink);
   background: rgba(255, 45, 138, 0.08);
@@ -1370,6 +1380,66 @@ body.terms-open {
 @media (max-width: 720px) {
   .site-nav__toggle {
     display: flex;
+    flex-shrink: 0;
+  }
+
+  .site-nav__inner {
+    padding: 0.55rem 0.6rem 0.55rem 0.5rem;
+    gap: 0.35rem;
+  }
+
+  .site-nav__start {
+    gap: 0.3rem;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .site-nav__brand {
+    font-size: 1.15rem;
+    min-width: 0;
+  }
+
+  .site-nav__logo {
+    width: 36px;
+    height: 36px;
+    margin-right: 0.45rem;
+  }
+
+  .site-nav__contact {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+
+  .site-nav__contact-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .site-nav__contact-icon {
+    display: block;
+  }
+
+  .site-nav__donate {
+    padding: 0.28rem 0.45rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.02em;
+  }
+
+  .site-nav__tools {
+    margin-left: 0;
+    flex-shrink: 0;
   }
 
   .site-nav__menu {
@@ -1399,10 +1469,8 @@ body.terms-open {
     padding: 0.75rem;
   }
 
-  .site-nav__donate,
-  .site-nav__contact {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.72rem;
+  .site-nav__tools .theme-bar__buttons {
+    gap: 0.2rem;
   }
 
   .site-nav__tools .theme-bar__toggle {
