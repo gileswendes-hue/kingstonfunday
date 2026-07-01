@@ -147,7 +147,11 @@
   background: linear-gradient(180deg, #4da6d9 0%, #87ceeb 38%, #b8e4f9 100%);
 }
 
-body > .site-nav,
+body > .site-nav {
+  position: fixed;
+  z-index: 150;
+}
+
 body > .hero,
 body > main,
 body > footer {
@@ -711,7 +715,7 @@ body > footer {
 [data-theme="ceefax"] .terms-modal__panel,
 [data-theme="ceefax"] .price-summary,
 [data-theme="ceefax"] .banner,
-[data-theme="ceefax"] .site-nav__tools .theme-bar__panel {
+[data-theme="ceefax"] .site-nav__weather-wrap .theme-bar__panel {
   background: var(--bg-card);
   border: 2px solid #ffffff;
   border-radius: 0;

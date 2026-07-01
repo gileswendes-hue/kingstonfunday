@@ -1192,19 +1192,30 @@ body.terms-open {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 100;
+  z-index: 150;
   background: rgba(10, 10, 15, 0.94);
   backdrop-filter: blur(12px);
   box-shadow: 0 1px 0 var(--border);
+  overflow: visible;
 }
 
-.site-nav > .theme-bar__panel {
+.site-nav__inner,
+.site-nav__tools,
+.site-nav__weather-wrap {
+  overflow: visible;
+}
+
+.site-nav__weather-wrap {
+  position: relative;
+}
+
+.site-nav__weather-wrap .theme-bar__panel {
   position: absolute;
-  top: 100%;
-  right: 1.25rem;
+  top: calc(100% + 0.4rem);
+  right: 0;
   width: 220px;
-  margin-top: 0.35rem;
-  z-index: 120;
+  z-index: 200;
+  pointer-events: auto;
 }
 
 .site-nav.is-scrolled {
@@ -1400,7 +1411,7 @@ body.terms-open {
     font-size: 0.95rem;
   }
 
-  .site-nav > .theme-bar__panel {
+  .site-nav__weather-wrap .theme-bar__panel {
     width: min(280px, calc(100vw - 2rem));
   }
 }
