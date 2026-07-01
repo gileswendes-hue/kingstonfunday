@@ -707,7 +707,7 @@ body > footer {
 [data-theme="ceefax"] .terms-modal__panel,
 [data-theme="ceefax"] .price-summary,
 [data-theme="ceefax"] .banner,
-[data-theme="ceefax"] .theme-bar__panel {
+[data-theme="ceefax"] .site-nav__tools .theme-bar__panel {
   background: var(--bg-card);
   border: 2px solid #ffffff;
   border-radius: 0;
@@ -765,13 +765,7 @@ body > footer {
   border-top: 2px solid #ffffff;
 }
 
-[data-theme="ceefax"] .theme-bar {
-  background: #000050;
-  border: 2px solid #ffffff;
-  border-radius: 0;
-}
-
-[data-theme="ceefax"] .theme-bar__toggle {
+[data-theme="ceefax"] .site-nav__tools .theme-bar__toggle {
   border-radius: 0;
   border: 1px solid #00ffff;
   background: #000084;

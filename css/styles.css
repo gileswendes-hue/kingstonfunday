@@ -1200,12 +1200,14 @@ body.terms-open {
   left: 0;
   right: 0;
   z-index: 100;
-  transition: background 0.2s, box-shadow 0.2s;
+  background: rgba(10, 10, 15, 0.94);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 1px 0 var(--border);
 }
 
 .site-nav.is-scrolled {
-  background: rgba(10, 10, 15, 0.92);
-  backdrop-filter: blur(10px);
+  background: rgba(10, 10, 15, 0.94);
+  backdrop-filter: blur(12px);
   box-shadow: 0 1px 0 var(--border);
 }
 
@@ -1251,10 +1253,16 @@ body.terms-open {
 .site-nav__brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.95rem;
   font-family: var(--font-display);
   font-size: 1.5rem;
   letter-spacing: 0.06em;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.site-nav__brand:hover,
+.site-nav__brand:focus-visible {
   color: var(--text);
   text-decoration: none;
 }
@@ -1275,6 +1283,34 @@ body.terms-open {
   display: flex;
   gap: 0.25rem;
   align-items: center;
+}
+
+.site-nav__tools {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.site-nav__tools .theme-bar__buttons {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.site-nav__tools .theme-bar__toggle {
+  width: 38px;
+  height: 38px;
+  font-size: 1.05rem;
+}
+
+.site-nav__tools .theme-bar__panel {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  width: 220px;
+  z-index: 120;
 }
 
 .site-nav__link {
@@ -1359,6 +1395,16 @@ body.terms-open {
   .site-nav__contact {
     padding: 0.3rem 0.6rem;
     font-size: 0.72rem;
+  }
+
+  .site-nav__tools .theme-bar__toggle {
+    width: 34px;
+    height: 34px;
+    font-size: 0.95rem;
+  }
+
+  .site-nav__tools .theme-bar__panel {
+    width: min(280px, calc(100vw - 2rem));
   }
 }
 
@@ -1894,15 +1940,46 @@ body > .donate-modal,
 body > .terms-modal,
 body > .contact-modal,
 body > .lightbox,
-body > .theme-bar,
 body > .rain-overlay,
 body > .balloon-layer,
 body > .sky-scene {
   position: fixed;
 }
 
+/* ——— Theme & weather controls (in nav) ——— */
 .theme-bar__toggle {
   position: relative;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  font-size: 1.05rem;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, background 0.2s;
+}
+
+.theme-bar__toggle:hover {
+  transform: scale(1.06);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.theme-bar__panel {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  font-size: 0.85rem;
+}
+
+.theme-bar__panel[hidden] {
+  display: none;
 }
 
 .balloon-pop-count {
@@ -1940,57 +2017,6 @@ body > .sky-scene {
   opacity: 1;
 }
 
-/* ——— Theme & weather controls ——— */
-.theme-bar {
-  top: 4.75rem;
-  right: 1rem;
-  bottom: auto;
-  z-index: 90;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.5rem;
-  max-width: min(320px, calc(100vw - 2rem));
-}
-
-.theme-bar__buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.theme-bar__toggle {
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  background: var(--bg-card);
-  backdrop-filter: blur(8px);
-  font-size: 1.35rem;
-  cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s;
-}
-
-.theme-bar__toggle:hover {
-  transform: scale(1.06);
-}
-
-.theme-bar__panel {
-  width: 100%;
-  padding: 0.85rem 1rem;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  background: var(--bg-card);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  font-size: 0.85rem;
-}
-
-.theme-bar__panel[hidden] {
-  display: none;
-}
-
 .theme-bar__row {
   display: flex;
   align-items: center;
@@ -2018,18 +2044,4 @@ body > .sky-scene {
   width: 18px;
   height: 18px;
   accent-color: var(--blue);
-}
-
-@media (max-width: 480px) {
-  .theme-bar {
-    top: auto;
-    bottom: 0.75rem;
-    right: 0.75rem;
-    left: auto;
-    align-items: flex-end;
-  }
-
-  .theme-bar__panel {
-    width: min(320px, calc(100vw - 1.5rem));
-  }
 }
