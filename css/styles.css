@@ -497,8 +497,21 @@ a:hover {
 
 .pitch-unit {
   margin: 0;
-  width: 6.25rem;
+  width: 5.25rem;
   text-align: center;
+  flex-shrink: 0;
+}
+
+@media (min-width: 400px) {
+  .pitch-unit {
+    width: 6rem;
+  }
+}
+
+@media (min-width: 540px) {
+  .pitch-unit {
+    width: 6.5rem;
+  }
 }
 
 .pitch-unit__label {
@@ -519,11 +532,19 @@ a:hover {
 }
 
 .pitch-unit__shell {
-  filter: drop-shadow(0 0 6px rgba(255, 140, 66, 0.35));
+  filter: drop-shadow(0 0 5px rgba(255, 140, 66, 0.4));
 }
 
-.pitch-person {
-  opacity: 0.95;
+.pitch-unit__fill {
+  pointer-events: none;
+}
+
+.pitch-person--adult {
+  opacity: 1;
+}
+
+.pitch-person--child {
+  opacity: 0.88;
 }
 
 .pitch-dogs-outside {
@@ -1343,17 +1364,34 @@ body.contact-open {
   overflow: hidden;
   border: 1px solid var(--border);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+.about-poster__trigger {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: zoom-in;
   transition: transform 0.3s ease;
 }
 
-.about-poster:hover {
+.about-poster:hover .about-poster__trigger {
   transform: scale(1.02) rotate(-0.5deg);
 }
 
-.about-poster img {
+.about-poster__trigger img {
   display: block;
   width: 100%;
   height: auto;
+}
+
+.about-poster__hint {
+  margin: 0.55rem 0 0;
+  padding: 0 0.25rem;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-muted);
 }
 
 /* ——— Reveal animation ——— */
@@ -1629,12 +1667,8 @@ body.lightbox-open {
   gap: 1rem;
 }
 
-.map-hint {
-  margin: 0;
-  flex: 1;
-  min-width: 200px;
-  font-size: 0.85rem;
-  color: var(--text-muted);
+.leaflet-control-attribution {
+  display: none !important;
 }
 
 .leaflet-popup-content-wrapper {
