@@ -22,8 +22,14 @@
       <div class="cloud cloud--3"></div>
     </div>
   </div>
-  <div id="balloon-layer" class="balloon-layer is-active" aria-hidden="true">
-    <div id="sky-balloons" class="balloon-layer__inner"></div>
+  <div id="balloon-layer-back" class="balloon-layer balloon-layer--back" aria-hidden="true">
+    <div id="sky-balloons-back" class="balloon-layer__inner"></div>
+  </div>
+  <div id="balloon-layer-mid" class="balloon-layer balloon-layer--mid" aria-hidden="true">
+    <div id="sky-balloons-mid" class="balloon-layer__inner"></div>
+  </div>
+  <div id="balloon-layer-front" class="balloon-layer balloon-layer--front" aria-hidden="true">
+    <div id="sky-balloons-front" class="balloon-layer__inner"></div>
   </div>
   <canvas id="rain-canvas" class="rain-overlay" aria-hidden="true"></canvas>
   <nav class="site-nav is-scrolled" aria-label="Main">
@@ -77,7 +83,7 @@
   <div class="theme-bar">
     <div class="theme-bar__buttons">
       <button type="button" class="theme-bar__toggle" id="theme-toggle" aria-label="Switch to sky theme">☀️</button>
-      <button type="button" class="theme-bar__toggle" id="balloon-toggle" aria-pressed="true" aria-label="Toggle balloons" title="Balloons">🎈</button>
+      <button type="button" class="theme-bar__toggle" id="balloon-toggle" aria-pressed="false" aria-label="Toggle balloons" title="Balloons">🎈</button>
       <button type="button" class="theme-bar__toggle" id="weather-panel-toggle" aria-expanded="false" aria-controls="weather-panel" aria-label="Wind and rain" title="Wind &amp; rain">🌬️</button>
     </div>
     <div class="theme-bar__panel" id="weather-panel" hidden>
@@ -119,6 +125,7 @@
   </div>
 
   <script src="js/config.js"></script>
+  <script src="js/sheet-log.js"></script>
   <script src="js/paypal-shared.js"></script>
   <script src="js/sky.js" defer></script>
   <script src="js/donate.js" defer></script>
