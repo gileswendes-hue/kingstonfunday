@@ -212,7 +212,11 @@
             </div>
             <div class="field-row">
               <label for="address">Postal address <span aria-hidden="true">*</span></label>
-              <textarea id="address" name="address" rows="3" required placeholder="For posting your passes and wristbands" autocomplete="street-address"></textarea>
+              <textarea id="address" name="address" rows="3" required placeholder="Street address for posting your passes and wristbands" autocomplete="street-address"></textarea>
+            </div>
+            <div class="field-row field-row--postcode">
+              <label for="postcode">Postcode <span aria-hidden="true">*</span></label>
+              <input type="text" id="postcode" name="postcode" required autocomplete="postal-code" maxlength="8" pattern="[A-Za-z]{1,2}[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}" title="Enter a valid UK postcode, e.g. TQ7 4QD">
             </div>
           </fieldset>
 
