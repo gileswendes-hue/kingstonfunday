@@ -168,7 +168,7 @@
 
         return `
           <article
-            class="band-card reveal${band.featured ? ' band-card--featured' : ''}"
+            class="band-card${band.featured ? ' band-card--featured' : ''}"
             style="${bandAccentVars(band.accent)}"
             tabindex="0"
             role="button"
@@ -215,6 +215,86 @@
     });
   }
 
+  /* ——— Lightbox ——— */
+  let lightboxApi = null;
+
+  function initLightbox() {
+    const root = document.getElementById('lightbox');
+    const img = document.getElementById('lightbox-img');
+    const closeBtn = document.getElementById('lightbox-close');
+    const prevBtn = document.getElementById('lightbox-prev');
+    const nextBtn = document.getElementById('lightbox-next');
+    if (!root || !img) return;
+
+    const state = { slides: [], index: 0 };
+
+    function syncNav() {
+      const multi = state.slides.length > 1;
+      if (prevBtn) prevBtn.hidden = !multi;
+      if (nextBtn) nextBtn.hidden = !multi;
+    }
+
+    function showSlide() {
+      const slide = state.slides[state.index];
+      if (!slide) return;
+      if (typeof slide === 'string') {
+        img.src = slide;
+        img.alt = '';
+      } else {
+        img.src = slide.src;
+        img.alt = slide.alt || '';
+      }
+    }
+
+    function open(slides, index = 0) {
+      state.slides = slides;
+      state.index = index;
+      showSlide();
+      syncNav();
+      root.hidden = false;
+      document.body.classList.add('lightbox-open');
+    }
+
+    function close() {
+      root.hidden = true;
+      document.body.classList.remove('lightbox-open');
+    }
+
+    function step(dir) {
+      if (state.slides.length <= 1) return;
+      state.index = (state.index + dir + state.slides.length) % state.slides.length;
+      showSlide();
+    }
+
+    closeBtn?.addEventListener('click', close);
+    root.addEventListener('click', (e) => {
+      if (e.target === root) close();
+    });
+    prevBtn?.addEventListener('click', () => step(-1));
+    nextBtn?.addEventListener('click', () => step(1));
+    document.addEventListener('keydown', (e) => {
+      if (root.hidden) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') step(-1);
+      if (e.key === 'ArrowRight') step(1);
+    });
+
+    lightboxApi = { open, close };
+  }
+
+  function initPoster() {
+    const btn = document.getElementById('poster-enlarge');
+    const posterImg = btn?.querySelector('img');
+    if (!btn || !posterImg || !lightboxApi) return;
+
+    btn.addEventListener('click', () => {
+      lightboxApi.open(
+        [{ src: posterImg.currentSrc || posterImg.src, alt: posterImg.alt }],
+        0
+      );
+    });
+  }
+
   /* ——— Gallery ——— */
   function initGallery() {
     const grid = document.getElementById('gallery-grid');
@@ -236,7 +316,9 @@
         .join('');
 
       grid.querySelectorAll('.gallery-item').forEach((btn) => {
-        btn.addEventListener('click', () => openLightbox(Number(btn.dataset.index)));
+        btn.addEventListener('click', () => {
+          lightboxApi?.open(photos, Number(btn.dataset.index));
+        });
       });
 
       document.querySelectorAll('#gallery-grid .reveal').forEach((el) => {
@@ -255,44 +337,6 @@
     }
 
     render();
-
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const closeBtn = document.getElementById('lightbox-close');
-    let current = 0;
-
-    function openLightbox(index) {
-      current = index;
-      if (!lightbox || !lightboxImg) return;
-      lightboxImg.src = photos[index];
-      lightbox.hidden = false;
-      document.body.classList.add('lightbox-open');
-    }
-
-    function closeLightbox() {
-      if (!lightbox) return;
-      lightbox.hidden = true;
-      document.body.classList.remove('lightbox-open');
-    }
-
-    function step(dir) {
-      current = (current + dir + photos.length) % photos.length;
-      if (lightboxImg) lightboxImg.src = photos[current];
-    }
-
-    closeBtn?.addEventListener('click', closeLightbox);
-    lightbox?.addEventListener('click', (e) => {
-      if (e.target === lightbox) closeLightbox();
-    });
-    document.getElementById('lightbox-prev')?.addEventListener('click', () => step(-1));
-    document.getElementById('lightbox-next')?.addEventListener('click', () => step(1));
-
-    document.addEventListener('keydown', (e) => {
-      if (lightbox?.hidden) return;
-      if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowLeft') step(-1);
-      if (e.key === 'ArrowRight') step(1);
-    });
   }
 
   /* ——— Map ——— */
@@ -303,20 +347,33 @@
 
     const map = L.map(el, {
       scrollWheelZoom: false,
+      attributionControl: false,
       tap: true,
     }).setView([mapConfig.lat, mapConfig.lng], mapConfig.zoom || 15);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      attribution: '',
       maxZoom: 18,
     }).addTo(map);
 
     const marker = L.marker([mapConfig.lat, mapConfig.lng]).addTo(map);
     marker.bindPopup(
-      `<strong>${mapConfig.label}</strong><br>${mapConfig.address || ''}`
+      `<strong>${mapConfig.label}</strong><br>${mapConfig.address || ''}<br><a href="${mapConfig.w3wUrl || 'https://what3words.com/hedge.tidal.admits'}" target="_blank" rel="noopener">///${mapConfig.what3words || 'hedge.tidal.admits'}</a>`
     ).openPopup();
 
     el.addEventListener('click', () => map.scrollWheelZoom.enable(), { once: true });
+
+    const directionsPostcode = document.getElementById('map-directions-postcode');
+    if (directionsPostcode) {
+      directionsPostcode.href =
+        mapConfig.directionsPostcodeUrl ||
+        'https://www.google.com/maps/dir/?api=1&destination=TQ7+4QD';
+    }
+
+    const directionsW3w = document.getElementById('map-directions-w3w');
+    if (directionsW3w && mapConfig.w3wUrl) {
+      directionsW3w.href = mapConfig.w3wUrl;
+    }
 
     const directions = document.getElementById('map-directions');
     if (directions && mapConfig.directionsUrl) {
@@ -328,8 +385,10 @@
     initNav();
     initCountdown();
     initHeroMotion();
-    initLineup();
     initReveal();
+    initLightbox();
+    initLineup();
+    initPoster();
     initGallery();
     initMap();
   }
