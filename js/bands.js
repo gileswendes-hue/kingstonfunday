@@ -20,6 +20,7 @@ window.KFD_BANDS = [
     accent: '#ffffff',
     links: [
       { label: 'facebook', url: 'https://www.facebook.com/vickypark1989' }, 
+      { label: 'Spotify', url: 'https://open.spotify.com/artist/6uWF9aw0Kow25H6lFzMIgb?si=MPmGZjLPR_eomKKbjOk3GQ },
     ],
   },
   {
@@ -83,7 +84,9 @@ window.KFD_BANDS = [
     name: 'Yeoland',
     style: 'Folk duo · South Dartmoor',
     accent: '#ffffff',
-    links: [],
+    links: [
+     { label: 'facebook', url: 'https://www.facebook.com/profile.php?id=61584920023296' },
+    ],
   },
   {
     id: 'greg-shepherd',
