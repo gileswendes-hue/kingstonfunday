@@ -2,8 +2,8 @@
  * KFD camping pricing calculator.
  * - £15 per pitch per night (2 people included per pitch)
  * - £4 per extra adult (17+) per night beyond included occupancy
- * - Children under 16 are free (use included slots first)
- * - £3 flat printing & postage per booking
+ * - Children under 16 are free (fill remaining included capacity after adults)
+ * - £2 flat printing & postage per booking
  * - Max 6 people per pitch — extra pitches added automatically
  * - Max 6 dogs per booking
  */
@@ -11,7 +11,7 @@
 const RATES = {
   pitchPerNight: 15,
   extraAdultPerNight: 4,
-  postage: 3,
+  postage: 2,
   maxPeoplePerPitch: 6,
   includedPeople: 2,
   maxDogs: 6,
@@ -32,10 +32,8 @@ function calculateCampingPrice({ nights, adults, children, dogs }) {
   const pitchFee = pitchCount * n * RATES.pitchPerNight;
 
   const includedTotal = pitchCount * RATES.includedPeople;
-  const childrenInFree = Math.min(c, includedTotal);
-  const freeSlotsRemaining = includedTotal - childrenInFree;
-  const adultsInFree = Math.min(a, freeSlotsRemaining);
-  const chargeableAdults = a - adultsInFree;
+  // Adults use included places first; children are free and never trigger extra-adult fees.
+  const chargeableAdults = Math.max(0, a - Math.min(a, includedTotal));
   const extraAdultFee = chargeableAdults * n * RATES.extraAdultPerNight;
 
   const postage = RATES.postage;
