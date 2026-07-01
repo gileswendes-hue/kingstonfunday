@@ -4,19 +4,27 @@ window.KFD_CONFIG = window.KFD_CONFIG || {
   paypalBusinessEmail: 'KFDcamping@outlook.com',
 
   organiserEmail: 'KFDcamping@outlook.com',
+  formspreeEndpoint: 'https://formspree.io/f/mykqpaag',
   bookingDeadline: '2026-07-29',
   bookingSheetUrl: 'https://script.google.com/macros/s/AKfycbzFi5eFPAHmyIjLLYc2GqzIBxjpn7Owwv4NzF4JhOW69JjG62OfO4mbrf7R9fK_vA3V/exec',
+  // Must match SHEET_SECRET in docs/booking-sheet.gs (stops random POSTs to your sheet URL).
+  bookingSheetSecret: 'kfd_xR8mN2pQ7vLw4kH9sTf3jY6bC1dZ5aXe0',
   thankYouUrl: 'thank-you.html',
 
   eventDate: '2026-08-01T12:00:00',
   instagram: 'https://www.instagram.com/kfd_kingstonfunday/',
 
   map: {
-    lat: 50.31472,
-    lng: -3.91485,
-    zoom: 16,
+    lat: 50.312848,
+    lng: -3.918089,
+    zoom: 17,
     label: 'Kingston Recreation Ground',
-    address: 'Kingston, South Devon TQ7 · Knightsbridge',
+    address: 'Kingston Recreation Ground · TQ7 4QD · ///hedge.tidal.admits',
+    postcode: 'TQ7 4QD',
+    what3words: 'hedge.tidal.admits',
+    w3wUrl: 'https://what3words.com/hedge.tidal.admits',
+    directionsPostcodeUrl:
+      'https://www.google.com/maps/dir/?api=1&destination=TQ7+4QD',
     directionsUrl:
       'https://www.google.com/maps/dir/?api=1&destination=Kingston+Recreation+Ground,+Kingston,+Devon',
   },

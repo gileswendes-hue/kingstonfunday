@@ -27,6 +27,9 @@
     document.getElementById('paypal-ref').textContent = ref;
     window.KFD_SHEET?.replayForRef?.(ref);
     window.KFD_SHEET?.flushPending?.(ref);
+    if (!isDonation) {
+      window.KFD_NOTIFY?.replayCustomerConfirmation?.(ref);
+    }
   }
 
   async function notifyLegacyReturn() {
@@ -37,28 +40,24 @@
 
     const custom = params.get('cm') || params.get('custom') || '';
     const amount = params.get('amt') || params.get('mc_gross') || '';
-    const email = config.organiserEmail;
+    const email = window.KFD_NOTIFY?.endpoint?.();
     if (!email) return;
 
     const storageKey = 'kfd-notified-' + ref;
     if (sessionStorage.getItem(storageKey)) return;
     sessionStorage.setItem(storageKey, '1');
 
-    await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(email), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        _subject: 'KFD Camping Booking (PayPal return) — ' + (custom.split('|')[0] || 'Guest'),
-        _template: 'box',
-        message: [
-          'Booking paid via PayPal website checkout',
-          '',
-          'Reference: ' + ref,
-          'Amount: £' + amount,
-          'Details: ' + custom.replace(/\|/g, '\n'),
-        ].join('\n'),
-        transaction_id: ref,
-      }),
+    await window.KFD_NOTIFY.send({
+      name: custom.split('|')[0] || 'Guest',
+      email: config.organiserEmail || 'bookings@kingstonfunday.co.uk',
+      _subject: 'KFD Camping Booking (PayPal return) — ' + (custom.split('|')[0] || 'Guest'),
+      message: [
+        'Booking paid via PayPal website checkout',
+        '',
+        'Reference: ' + ref,
+        'Amount: £' + amount,
+        'Details: ' + custom.replace(/\|/g, '\n'),
+      ].join('\n'),
     }).catch(() => {});
   }
 

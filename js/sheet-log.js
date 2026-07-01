@@ -8,6 +8,10 @@
     return ((window.KFD_CONFIG || {}).bookingSheetUrl || '').trim();
   }
 
+  function sheetSecret() {
+    return ((window.KFD_CONFIG || {}).bookingSheetSecret || '').trim();
+  }
+
   function paymentRef(record) {
     return record.paypal_reference || record.transaction_id || '';
   }
@@ -27,19 +31,22 @@
   }
 
   async function postRecord(url, record) {
-    const body = new URLSearchParams({ payload: JSON.stringify(record) });
+    const secret = sheetSecret();
+    const payload = secret ? { token: secret, ...record } : record;
+
     await fetch(url, {
       method: 'POST',
       mode: 'no-cors',
       keepalive: true,
-      body,
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload),
     });
   }
 
   /** Silent POST to Google Sheet (requires bookingSheetUrl in config). */
   async function log(record) {
     const url = sheetUrl();
-    if (!url) return false;
+    if (!url || !sheetSecret()) return false;
 
     const ref = paymentRef(record);
     backupRecord(ref, record);
