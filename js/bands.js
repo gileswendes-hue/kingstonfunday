@@ -15,7 +15,7 @@ window.KFD_BANDS = [
   },
   {
     id: '500-hojus',
-    name: '500 Hojas',
+    name: '500 Hojus',
     style: 'Live music',
     accent: '#ffffff',
     links: [
@@ -173,6 +173,18 @@ window.KFD_BANDS = [
           toggle();
         }
       });
+
+      if (band.id === 'vardo-manor') {
+        card.addEventListener('dblclick', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (window.KFD_THEME?.isCeefaxUnlocked?.()) {
+            window.KFD_THEME.toggleCeefax();
+          } else {
+            window.KFD_THEME?.enableCeefax?.();
+          }
+        });
+      }
     });
   }
 

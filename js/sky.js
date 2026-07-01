@@ -2,6 +2,7 @@
   'use strict';
 
   const STORAGE_KEY = 'kfd-theme';
+  const CEEFAX_UNLOCK_KEY = 'kfd-ceefax-unlocked';
   const WIND_KEY = 'kfd-wind';
   const RAIN_KEY = 'kfd-rain';
   const BALLOON_KEY = 'kfd-balloons';
@@ -25,6 +26,7 @@
   const weatherPanel = document.getElementById('weather-panel');
   const windSlider = document.getElementById('wind-speed');
   const rainToggle = document.getElementById('rain-toggle');
+  const ceefaxBar = document.getElementById('ceefax-bar');
 
   let windFactor = 1;
   let rainActive = false;
@@ -46,8 +48,22 @@
     'M12 0 C16 28 8 52 13 78 S12 100 12 100"/>' +
     '</path></svg>';
 
+  function isCeefaxUnlocked() {
+    return localStorage.getItem(CEEFAX_UNLOCK_KEY) === '1';
+  }
+
   function getTheme() {
-    return root.dataset.theme === 'sky' ? 'sky' : 'dark';
+    const theme = root.dataset.theme;
+    if (theme === 'sky') return 'sky';
+    if (theme === 'ceefax') return 'ceefax';
+    return 'dark';
+  }
+
+  function syncCeefaxBar(theme) {
+    if (!ceefaxBar) return;
+    const show = theme === 'ceefax';
+    ceefaxBar.hidden = !show;
+    ceefaxBar.setAttribute('aria-hidden', show ? 'false' : 'true');
   }
 
   function allLayers() {
@@ -55,12 +71,27 @@
   }
 
   function setTheme(theme) {
+    if (theme === 'ceefax' && !isCeefaxUnlocked()) {
+      theme = 'dark';
+    }
+
     root.dataset.theme = theme;
     localStorage.setItem(STORAGE_KEY, theme);
     updateThemeMeta(theme);
     updateThemeButton(theme);
+    syncCeefaxBar(theme);
     syncBalloonLayers();
     syncRainFromToggle();
+  }
+
+  function enableCeefax() {
+    localStorage.setItem(CEEFAX_UNLOCK_KEY, '1');
+    setTheme('ceefax');
+  }
+
+  function toggleCeefax() {
+    if (!isCeefaxUnlocked()) return;
+    setTheme(getTheme() === 'ceefax' ? 'dark' : 'ceefax');
   }
 
   function syncRainFromToggle() {
@@ -110,11 +141,19 @@
 
   function updateThemeMeta(theme) {
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.content = theme === 'sky' ? '#87ceeb' : '#0a0a0f';
+    if (!meta) return;
+    if (theme === 'sky') meta.content = '#87ceeb';
+    else if (theme === 'ceefax') meta.content = '#000084';
+    else meta.content = '#0a0a0f';
   }
 
   function updateThemeButton(theme) {
     if (!themeToggle) return;
+    if (theme === 'ceefax') {
+      themeToggle.textContent = '📺';
+      themeToggle.setAttribute('aria-label', 'Exit Ceefax mode');
+      return;
+    }
     themeToggle.textContent = theme === 'sky' ? '🌙' : '☀️';
     themeToggle.setAttribute(
       'aria-label',
@@ -240,7 +279,6 @@
 
     fx.innerHTML =
       '<span class="balloon-pop-fx__flash"></span>' +
-      '<span class="balloon-pop-fx__body"></span>' +
       '<span class="balloon-pop-fx__ring"></span>' +
       '<span class="balloon-pop-fx__ring balloon-pop-fx__ring--delay"></span>';
 
@@ -367,7 +405,12 @@
 
   function initControls() {
     themeToggle?.addEventListener('click', () => {
-      setTheme(getTheme() === 'sky' ? 'dark' : 'sky');
+      const current = getTheme();
+      if (current === 'ceefax') {
+        setTheme('dark');
+        return;
+      }
+      setTheme(current === 'sky' ? 'dark' : 'sky');
     });
 
     balloonToggle?.addEventListener('click', () => {
@@ -394,7 +437,11 @@
   }
 
   function init() {
-    const savedTheme = localStorage.getItem(STORAGE_KEY) || 'dark';
+    let savedTheme = localStorage.getItem(STORAGE_KEY) || 'dark';
+    if (savedTheme === 'ceefax' && !isCeefaxUnlocked()) {
+      savedTheme = 'dark';
+    }
+
     const savedWind = localStorage.getItem(WIND_KEY);
     const savedRain = localStorage.getItem(RAIN_KEY) === '1';
     const savedBalloons = localStorage.getItem(BALLOON_KEY);
@@ -403,6 +450,7 @@
     root.dataset.theme = savedTheme;
     updateThemeMeta(savedTheme);
     updateThemeButton(savedTheme);
+    syncCeefaxBar(savedTheme);
     updateBalloonToggle();
 
     if (windSlider && savedWind !== null) windSlider.value = savedWind;
@@ -420,6 +468,13 @@
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) rainController?.stop();
     });
   }
+
+  window.KFD_THEME = {
+    enableCeefax,
+    toggleCeefax,
+    isCeefaxUnlocked,
+    isCeefaxActive: () => getTheme() === 'ceefax',
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
