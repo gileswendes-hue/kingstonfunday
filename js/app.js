@@ -96,6 +96,8 @@
 
       address: form.address.value.trim(),
 
+      postcode: form.postcode.value.trim().toUpperCase(),
+
       nights: form.nights.value,
 
       accommodation: form.querySelector('input[name="accommodation"]:checked')?.value || 'tent',
@@ -223,6 +225,8 @@
       email: values.email,
 
       postal_address: values.address,
+
+      postcode: values.postcode,
 
       nights: values.nights,
 

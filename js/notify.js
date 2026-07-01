@@ -43,6 +43,7 @@
       '',
       'We will post your camping passes and wristbands to:',
       record.postal_address || '',
+      record.postcode || '',
       '',
       'Booking summary',
       '• ' + pitches + ' pitch(es), ' + (record.nights || '') + ' night(s)',
