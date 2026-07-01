@@ -51,18 +51,20 @@
         <div class="theme-bar__buttons">
           <button type="button" class="theme-bar__toggle" id="theme-toggle" aria-label="Switch to sky theme">☀️</button>
           <button type="button" class="theme-bar__toggle" id="balloon-toggle" aria-pressed="false" aria-label="Toggle balloons" title="Balloons">🎈</button>
-          <button type="button" class="theme-bar__toggle" id="weather-panel-toggle" aria-expanded="false" aria-controls="weather-panel" aria-label="Wind and rain" title="Wind &amp; rain">🌬️</button>
+          <div class="site-nav__weather-wrap">
+            <button type="button" class="theme-bar__toggle" id="weather-panel-toggle" aria-expanded="false" aria-controls="weather-panel" aria-label="Wind and rain" title="Wind &amp; rain">🌬️</button>
+            <div class="theme-bar__panel" id="weather-panel" hidden>
+              <div class="theme-bar__row">
+                <label for="wind-speed">Wind</label>
+                <input type="range" id="wind-speed" min="0" max="100" value="40">
+              </div>
+              <div class="theme-bar__row">
+                <label for="rain-toggle">Rain</label>
+                <input type="checkbox" id="rain-toggle" aria-label="Toggle rain">
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="theme-bar__panel" id="weather-panel" hidden>
-      <div class="theme-bar__row">
-        <label for="wind-speed">Wind</label>
-        <input type="range" id="wind-speed" min="0" max="100" value="40">
-      </div>
-      <div class="theme-bar__row">
-        <label for="rain-toggle">Rain</label>
-        <input type="checkbox" id="rain-toggle" aria-label="Toggle rain">
       </div>
     </div>
   </nav>
