@@ -8,8 +8,16 @@
   const BALLOON_HUES = [330, 200, 45, 280, 160, 15, 350, 120];
 
   const root = document.documentElement;
-  const balloonLayer = document.getElementById('balloon-layer');
-  const balloonRoot = document.getElementById('sky-balloons');
+  const balloonLayers = {
+    back: document.getElementById('balloon-layer-back'),
+    mid: document.getElementById('balloon-layer-mid'),
+    front: document.getElementById('balloon-layer-front'),
+  };
+  const balloonRoots = {
+    back: document.getElementById('sky-balloons-back'),
+    mid: document.getElementById('sky-balloons-mid'),
+    front: document.getElementById('sky-balloons-front'),
+  };
   const rainCanvas = document.getElementById('rain-canvas');
   const themeToggle = document.getElementById('theme-toggle');
   const balloonToggle = document.getElementById('balloon-toggle');
@@ -22,11 +30,28 @@
   let rainActive = false;
   let rainAnimId = null;
   let raindrops = [];
-  let balloonsEnabled = true;
+  let balloonsEnabled = false;
   let rainController = null;
+  let popCount = 0;
+
+  const STRING_SVG =
+    '<svg class="balloon__string" viewBox="0 0 24 100" aria-hidden="true">' +
+    '<path class="balloon__string-path" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">' +
+    '<animate attributeName="d" dur="2.4s" repeatCount="indefinite" ' +
+    'values="M12 0 C16 28 8 52 13 78 S12 100 12 100;' +
+    'M12 0 C8 26 18 50 9 79 S14 98 12 100;' +
+    'M12 0 C18 30 6 54 15 76 S10 102 12 100;' +
+    'M12 0 C14 24 10 56 11 74 S16 96 12 100;' +
+    'M12 0 C10 32 16 48 8 80 S14 98 12 100;' +
+    'M12 0 C16 28 8 52 13 78 S12 100 12 100"/>' +
+    '</path></svg>';
 
   function getTheme() {
     return root.dataset.theme === 'sky' ? 'sky' : 'dark';
+  }
+
+  function allLayers() {
+    return Object.values(balloonLayers).filter(Boolean);
   }
 
   function setTheme(theme) {
@@ -34,7 +59,7 @@
     localStorage.setItem(STORAGE_KEY, theme);
     updateThemeMeta(theme);
     updateThemeButton(theme);
-    syncBalloonLayer();
+    syncBalloonLayers();
     syncRainFromToggle();
   }
 
@@ -43,27 +68,43 @@
     else rainController?.stop();
   }
 
-  function syncBalloonLayer() {
-    if (!balloonLayer) return;
-    balloonLayer.classList.toggle('is-active', balloonsEnabled);
-    balloonLayer.setAttribute('aria-hidden', balloonsEnabled ? 'false' : 'true');
+  function syncBalloonLayers() {
+    allLayers().forEach((layer) => {
+      layer.classList.toggle('is-active', balloonsEnabled);
+      layer.setAttribute('aria-hidden', balloonsEnabled ? 'false' : 'true');
+    });
   }
 
   function updateBalloonToggle() {
     if (!balloonToggle) return;
     balloonToggle.setAttribute('aria-pressed', balloonsEnabled ? 'true' : 'false');
     balloonToggle.classList.toggle('is-active', balloonsEnabled);
+    updatePopBadge();
+  }
+
+  function updatePopBadge() {
+    if (!balloonToggle) return;
+    let badge = balloonToggle.querySelector('.balloon-pop-count');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'balloon-pop-count';
+      balloonToggle.appendChild(badge);
+    }
+    badge.textContent = String(popCount);
+    badge.hidden = popCount === 0;
   }
 
   function setBalloonsEnabled(enabled) {
     balloonsEnabled = enabled;
     localStorage.setItem(BALLOON_KEY, enabled ? '1' : '0');
     updateBalloonToggle();
-    syncBalloonLayer();
+    syncBalloonLayers();
     if (enabled) {
-      if (!balloonRoot?.children.length) populateBalloons();
-    } else if (balloonRoot) {
-      balloonRoot.innerHTML = '';
+      if (!balloonRoots.front?.children.length) populateBalloons();
+    } else {
+      Object.values(balloonRoots).forEach((rootEl) => {
+        if (rootEl) rootEl.innerHTML = '';
+      });
     }
   }
 
@@ -95,61 +136,160 @@
     document.querySelectorAll('.balloon').forEach((el) => {
       const baseRise = parseFloat(el.dataset.baseRise || '28');
       const baseSway = parseFloat(el.dataset.baseSway || '3');
+      const baseString = parseFloat(el.dataset.baseString || '2.4');
       const windBoost = 1 + windFactor * 0.85;
       el.style.setProperty('--rise-dur', (baseRise / (windFactor * windBoost)).toFixed(1) + 's');
       el.style.setProperty('--sway-dur', (baseSway / (windFactor * 0.9)).toFixed(2) + 's');
-      el.style.setProperty('--swing', (10 + windFactor * 18).toFixed(1) + 'deg');
+      el.style.setProperty('--string-dur', (baseString / (windFactor * 0.75)).toFixed(2) + 's');
+      el.style.setProperty('--swing', (3 + windFactor * 5).toFixed(1) + 'deg');
       el.style.setProperty('--drift', (60 + windFactor * 160).toFixed(0) + 'px');
+
+      const pathAnim = el.querySelector('.balloon__string-path animate');
+      if (pathAnim) {
+        pathAnim.setAttribute('dur', (baseString / (windFactor * 0.75)).toFixed(2) + 's');
+      }
     });
   }
 
-  function buildBalloon() {
-    const el = document.createElement('button');
-    el.type = 'button';
-    el.className = 'balloon';
-    const size = 62 + Math.random() * 58;
-    const depth = 1 + Math.random() * 0.55;
-    const baseRise = 18 + Math.random() * 16;
-    const baseSway = 2 + Math.random() * 2.5;
+  function balloonMarkup(layer) {
+    const size =
+      layer === 'back'
+        ? 22 + Math.random() * 14
+        : layer === 'mid'
+          ? 28 + Math.random() * 14
+          : 32 + Math.random() * 16;
+    const baseRise =
+      layer === 'back'
+        ? 42 + Math.random() * 58
+        : layer === 'mid'
+          ? 24 + Math.random() * 32
+          : 10 + Math.random() * 18;
+    const baseSway = 1.8 + Math.random() * 2.8;
+    const baseString = 1.6 + Math.random() * 2.6;
+    const hue = BALLOON_HUES[Math.floor(Math.random() * BALLOON_HUES.length)];
 
-    el.style.left = 4 + Math.random() * 92 + '%';
-    el.style.setProperty('--balloon-size', (size * depth).toFixed(0) + 'px');
-    el.style.setProperty('--balloon-hue', BALLOON_HUES[Math.floor(Math.random() * BALLOON_HUES.length)]);
-    el.style.setProperty('--rise-delay', (-Math.random() * baseRise).toFixed(1) + 's');
-    el.style.zIndex = String(Math.round(depth * 100));
-    el.dataset.baseRise = baseRise.toFixed(1);
-    el.dataset.baseSway = baseSway.toFixed(2);
-    el.setAttribute('aria-label', 'Pop balloon');
+    return {
+      size,
+      baseRise,
+      baseSway,
+      baseString,
+      hue,
+      left: 4 + Math.random() * 92,
+      delay: (-Math.random() * baseRise).toFixed(1),
+    };
+  }
+
+  function buildBalloon(layer) {
+    const spec = balloonMarkup(layer);
+    const el = document.createElement(layer === 'front' ? 'button' : 'div');
+    if (layer === 'front') {
+      el.type = 'button';
+      el.setAttribute('aria-label', 'Pop balloon');
+    } else {
+      el.setAttribute('aria-hidden', 'true');
+    }
+
+    el.className = 'balloon balloon--' + layer;
+    el.style.left = spec.left + '%';
+    el.style.setProperty('--balloon-size', spec.size.toFixed(0) + 'px');
+    el.style.setProperty('--balloon-hue', spec.hue);
+    el.style.setProperty('--rise-delay', spec.delay + 's');
+    el.dataset.baseRise = spec.baseRise.toFixed(1);
+    el.dataset.baseSway = spec.baseSway.toFixed(2);
+    el.dataset.baseString = spec.baseString.toFixed(2);
+    el.style.setProperty('--string-dur', spec.baseString.toFixed(2) + 's');
 
     el.innerHTML =
-      '<span class="balloon__body"></span><span class="balloon__knot"></span><span class="balloon__string"></span>';
+      '<span class="balloon__float">' +
+      '<span class="balloon__sway">' +
+      '<span class="balloon__body"></span>' +
+      '<span class="balloon__knot"></span>' +
+      '<span class="balloon__string-wrap">' +
+      STRING_SVG +
+      '</span></span></span>';
 
-    el.addEventListener('click', (e) => {
-      e.stopPropagation();
-      popBalloon(el);
-    });
+    if (layer === 'front') {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        popBalloon(el);
+      });
+    }
 
     return el;
   }
 
   function popBalloon(el) {
     if (!el || el.classList.contains('is-popping')) return;
+
+    const float = el.querySelector('.balloon__float');
+    if (float) float.style.animationPlayState = 'paused';
+
+    const target = el.querySelector('.balloon__body') || el;
+    const rect = target.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const hue = getComputedStyle(el).getPropertyValue('--balloon-hue').trim() || '330';
+    const size = getComputedStyle(el).getPropertyValue('--balloon-size').trim() || '36px';
+
+    const fx = document.createElement('div');
+    fx.className = 'balloon-pop-fx';
+    fx.style.left = cx + 'px';
+    fx.style.top = cy + 'px';
+    fx.style.setProperty('--balloon-hue', hue);
+    fx.style.setProperty('--balloon-size', size);
+
+    fx.innerHTML =
+      '<span class="balloon-pop-fx__flash"></span>' +
+      '<span class="balloon-pop-fx__body"></span>' +
+      '<span class="balloon-pop-fx__ring"></span>' +
+      '<span class="balloon-pop-fx__ring balloon-pop-fx__ring--delay"></span>';
+
+    for (let i = 0; i < 10; i++) {
+      const bit = document.createElement('span');
+      bit.className = 'balloon-pop-fx__bit';
+      bit.style.setProperty('--bit-angle', (i * 36 + Math.random() * 18).toFixed(0) + 'deg');
+      bit.style.setProperty('--bit-dist', (24 + Math.random() * 40).toFixed(0) + 'px');
+      fx.appendChild(bit);
+    }
+
+    document.body.appendChild(fx);
+
     el.classList.add('is-popping');
-    el.disabled = true;
-    window.setTimeout(() => {
+    if (el.disabled !== undefined) el.disabled = true;
+
+    popCount += 1;
+    updatePopBadge();
+
+    let done = false;
+    const cleanup = () => {
+      if (done) return;
+      done = true;
+      fx.remove();
       el.remove();
-      if (balloonsEnabled) balloonRoot?.appendChild(buildBalloon());
-      setWind(windSlider?.value ?? 40);
-    }, 480);
+      if (balloonsEnabled && balloonRoots.front) {
+        balloonRoots.front.appendChild(buildBalloon('front'));
+        setWind(windSlider?.value ?? 40);
+      }
+    };
+
+    fx.addEventListener('animationend', cleanup, { once: true });
+    window.setTimeout(cleanup, 680);
   }
 
   function populateBalloons() {
-    if (!balloonRoot) return;
-    const count = window.matchMedia('(max-width: 640px)').matches ? 7 : 12;
-    balloonRoot.innerHTML = '';
-    for (let i = 0; i < count; i++) {
-      balloonRoot.appendChild(buildBalloon());
-    }
+    const counts = window.matchMedia('(max-width: 640px)').matches
+      ? { back: 4, mid: 3, front: 3 }
+      : { back: 6, mid: 5, front: 4 };
+
+    Object.entries(counts).forEach(([layer, count]) => {
+      const rootEl = balloonRoots[layer];
+      if (!rootEl) return;
+      rootEl.innerHTML = '';
+      for (let i = 0; i < count; i++) {
+        rootEl.appendChild(buildBalloon(layer));
+      }
+    });
+
     setWind(windSlider?.value ?? 40);
   }
 
@@ -258,7 +398,7 @@
     const savedWind = localStorage.getItem(WIND_KEY);
     const savedRain = localStorage.getItem(RAIN_KEY) === '1';
     const savedBalloons = localStorage.getItem(BALLOON_KEY);
-    balloonsEnabled = savedBalloons !== '0';
+    balloonsEnabled = savedBalloons === '1';
 
     root.dataset.theme = savedTheme;
     updateThemeMeta(savedTheme);
@@ -270,7 +410,7 @@
 
     rainController = initRain();
     initControls();
-    syncBalloonLayer();
+    syncBalloonLayers();
 
     if (balloonsEnabled) populateBalloons();
 
