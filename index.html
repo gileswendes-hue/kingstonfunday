@@ -184,6 +184,10 @@
           PayPal not configured — add your Client ID to <code>js/config.js</code> (Client ID only, never the Secret).
         </div>
 
+        <div id="sheet-banner" class="banner banner--warning" hidden>
+          Booking sheet not configured — add your Google Apps Script URL to <code>bookingSheetUrl</code> in <code>js/config.js</code> or bookings will not be recorded.
+        </div>
+
         <form id="booking-form" class="booking-form reveal" novalidate>
           <fieldset class="form-group">
             <legend>Your details</legend>
@@ -288,6 +292,7 @@
           </aside>
 
           <div id="paypal-section" class="paypal-section">
+            <p class="paypal-section__note">You must read and accept the campsite terms before payment.</p>
             <p id="payment-error" class="field-error payment-error" role="alert" hidden></p>
             <div id="card-button"></div>
           </div>
@@ -354,6 +359,56 @@
     </div>
   </div>
 
+  <div id="terms-modal" class="terms-modal" hidden>
+    <div class="terms-modal__backdrop" aria-hidden="true"></div>
+    <div class="terms-modal__panel" role="dialog" aria-modal="true" aria-labelledby="terms-title">
+      <h2 id="terms-title" class="terms-modal__title">Weekend Camping &amp; Campervan Booking</h2>
+      <p class="terms-modal__times"><strong>Opens:</strong> 4:00pm Friday 31 July 2026<br><strong>Closes:</strong> 11:00am Sunday 2 August 2026</p>
+
+      <div class="terms-modal__body">
+        <h3>Tent Campers</h3>
+        <ul>
+          <li>On arrival, please follow the directions of the campsite steward. If no steward is available, please park in the designated parking area.</li>
+          <li>Once parked, pitch your tent in a considerate manner. We may ask you to reposition your tent if necessary.</li>
+          <li><strong>All vehicles must be parked in the designated parking area.</strong> No vehicles are permitted in the camping field. This is for the safety of all campers and is non-negotiable.</li>
+          <li>Please display your Camping Pass clearly on the outside of your tent and wear your Camping Wristbands throughout your stay.</li>
+        </ul>
+
+        <h3>Campervans &amp; Motorhomes</h3>
+        <ul>
+          <li>On arrival, please follow the directions of the campsite steward. If no steward is available, please proceed to the signposted Campervan Area.</li>
+          <li>Please park as directed by the steward and in a considerate manner.</li>
+          <li>Please display your Camping Pass clearly inside your vehicle and wear your Camping Wristbands throughout your stay.</li>
+        </ul>
+
+        <h3>Campsite Rules</h3>
+        <ul>
+          <li>Please respect the landowner, neighbouring properties and field boundaries.</li>
+          <li>This is a family-friendly campsite. Please be considerate of fellow campers, particularly during the evening and early morning.</li>
+          <li><strong>Quiet hours are between 11:00pm and 7:00am.</strong> Please keep noise to a minimum during these times.</li>
+          <li><strong>No open fires are permitted anywhere on site.</strong> This includes campfires, fire pits, disposable BBQs, charcoal BBQs and any other naked flames.</li>
+          <li>Contained camping gas stoves are <strong>permitted for cooking only</strong> and must be used safely and never left unattended.</li>
+          <li>Well-behaved dogs are welcome but must be kept on a lead at all times. Please clean up after them.</li>
+          <li>Anyone under the age of 18 must be supervised by a responsible adult.</li>
+          <li>Please leave your pitch clean and tidy and either take all rubbish home with you or use the bins provided, if available.</li>
+        </ul>
+
+        <h3>Important Information</h3>
+        <ul>
+          <li>Camping is entirely at your own risk. Every effort has been made to provide a safe environment; however, the campsite is located on working farmland with naturally uneven ground and other rural hazards.</li>
+          <li>The organisers accept no responsibility for the loss, theft or damage of vehicles, equipment or personal belongings while on site.</li>
+          <li>The organisers accept no liability for accidents, injury or illness except where required by law.</li>
+          <li>Anyone who fails to comply with these campsite rules may be asked to leave the site without a refund. Bookings are non-refundable.</li>
+        </ul>
+
+        <p class="terms-modal__emergency"><strong>Emergency contact:</strong> 07880 318931 / 07714 399509</p>
+      </div>
+
+      <p id="terms-countdown" class="terms-modal__countdown" aria-live="polite"></p>
+      <button type="button" id="terms-accept" class="btn btn--primary terms-modal__accept" disabled>I accept these terms</button>
+    </div>
+  </div>
+
   <div id="donate-modal" class="donate-modal" hidden>
     <div class="donate-modal__backdrop" data-close aria-hidden="true"></div>
     <div class="donate-modal__panel" role="dialog" aria-modal="true" aria-labelledby="donate-title">
@@ -383,6 +438,7 @@
 
   <script src="js/config.js"></script>
   <script src="js/sheet-log.js"></script>
+  <script src="js/terms.js"></script>
   <script src="js/paypal-shared.js"></script>
   <script src="js/bands.js"></script>
   <script src="js/gallery.js"></script>
