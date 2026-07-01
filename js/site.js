@@ -148,7 +148,7 @@
     const nextBtn = document.getElementById('lightbox-next');
     if (!root || !img) return;
 
-    const state = { slides: [], index: 0 };
+    const state = { slides: [], index: 0, historyActive: false };
 
     function syncNav() {
       const multi = state.slides.length > 1;
@@ -175,11 +175,23 @@
       syncNav();
       root.hidden = false;
       document.body.classList.add('lightbox-open');
+
+      if (!state.historyActive) {
+        history.pushState({ kfdLightbox: true }, '');
+        state.historyActive = true;
+      }
     }
 
-    function close() {
+    function close(skipHistory) {
+      if (root.hidden) return;
+
       root.hidden = true;
       document.body.classList.remove('lightbox-open');
+
+      if (state.historyActive) {
+        state.historyActive = false;
+        if (!skipHistory) history.back();
+      }
     }
 
     function step(dir) {
@@ -188,33 +200,47 @@
       showSlide();
     }
 
-    closeBtn?.addEventListener('click', close);
+    closeBtn?.addEventListener('click', () => close(false));
     root.addEventListener('click', (e) => {
-      if (e.target === root) close();
+      if (e.target === root) close(false);
     });
-    prevBtn?.addEventListener('click', () => step(-1));
-    nextBtn?.addEventListener('click', () => step(1));
+    prevBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      step(-1);
+    });
+    nextBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      step(1);
+    });
     document.addEventListener('keydown', (e) => {
       if (root.hidden) return;
-      if (e.key === 'Escape') close();
+      if (e.key === 'Escape') close(false);
       if (e.key === 'ArrowLeft') step(-1);
       if (e.key === 'ArrowRight') step(1);
     });
+    window.addEventListener('popstate', () => {
+      if (!root.hidden) close(true);
+    });
 
-    lightboxApi = { open, close };
+    lightboxApi = { open, close: () => close(false) };
   }
 
   function initPoster() {
-    const btn = document.getElementById('poster-enlarge');
-    const posterImg = btn?.querySelector('img');
-    if (!btn || !posterImg || !lightboxApi) return;
+    function bindPoster(btnId) {
+      const btn = document.getElementById(btnId);
+      const posterImg = btn?.querySelector('img');
+      if (!btn || !posterImg || !lightboxApi) return;
 
-    btn.addEventListener('click', () => {
-      lightboxApi.open(
-        [{ src: posterImg.currentSrc || posterImg.src, alt: posterImg.alt }],
-        0
-      );
-    });
+      btn.addEventListener('click', () => {
+        lightboxApi.open(
+          [{ src: posterImg.currentSrc || posterImg.src, alt: posterImg.alt }],
+          0
+        );
+      });
+    }
+
+    bindPoster('event-poster-enlarge');
+    bindPoster('poster-enlarge');
   }
 
   /* ——— Gallery ——— */
@@ -269,19 +295,46 @@
 
     const map = L.map(el, {
       scrollWheelZoom: false,
-      attributionControl: false,
+      attributionControl: true,
       tap: true,
-    }).setView([mapConfig.lat, mapConfig.lng], mapConfig.zoom || 15);
+    }).setView([mapConfig.lat, mapConfig.lng], mapConfig.zoom || 18);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '',
-      maxZoom: 18,
-    }).addTo(map);
+    const satellite = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        attribution: 'Tiles &copy; Esri',
+        maxZoom: 19,
+      }
+    );
+
+    const streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap',
+      maxZoom: 19,
+    });
+
+    satellite.addTo(map);
+
+    L.control
+      .layers(
+        {
+          Satellite: satellite,
+          Map: streets,
+        },
+        null,
+        { position: 'topright' }
+      )
+      .addTo(map);
 
     const marker = L.marker([mapConfig.lat, mapConfig.lng]).addTo(map);
-    marker.bindPopup(
-      `<strong>${mapConfig.label}</strong><br>${mapConfig.address || ''}<br><a href="${mapConfig.w3wUrl || 'https://what3words.com/hedge.tidal.admits'}" target="_blank" rel="noopener">///${mapConfig.what3words || 'hedge.tidal.admits'}</a>`
-    ).openPopup();
+    const w3wLink = mapConfig.w3wUrl || 'https://what3words.com/hedge.tidal.admits';
+    const w3wLabel = mapConfig.what3words || 'hedge.tidal.admits';
+    const addressLine = mapConfig.address || 'TQ7 4QD';
+
+    marker
+      .bindPopup(
+        `<strong>${mapConfig.label}</strong><br>${addressLine}<br><a href="${w3wLink}" target="_blank" rel="noopener">///${w3wLabel}</a>`
+      )
+      .openPopup();
 
     el.addEventListener('click', () => map.scrollWheelZoom.enable(), { once: true });
 

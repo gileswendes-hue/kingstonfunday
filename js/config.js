@@ -15,11 +15,11 @@ window.KFD_CONFIG = window.KFD_CONFIG || {
   instagram: 'https://www.instagram.com/kfd_kingstonfunday/',
 
   map: {
-    lat: 50.312848,
-    lng: -3.918089,
-    zoom: 17,
+    lat: 50.31335,
+    lng: -3.91975,
+    zoom: 18,
     label: 'Kingston Recreation Ground',
-    address: 'Kingston Recreation Ground · TQ7 4QD · ///hedge.tidal.admits',
+    address: 'TQ7 4QD · ///hedge.tidal.admits',
     postcode: 'TQ7 4QD',
     what3words: 'hedge.tidal.admits',
     w3wUrl: 'https://what3words.com/hedge.tidal.admits',
