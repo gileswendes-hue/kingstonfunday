@@ -61,26 +61,8 @@
 
     const tasks = [window.KFD_SHEET.log(record)];
 
-    const email = config.organiserEmail;
-    if (email) {
-      tasks.push(
-        fetch('https://formsubmit.co/ajax/' + encodeURIComponent(email), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({
-            _subject: `KFD Donation — ${formatGBP(amount)}`,
-            _template: 'box',
-            message: [
-              'New donation received',
-              '',
-              `Amount: ${formatGBP(amount)}`,
-              `Reference: ${transactionId}`,
-            ].join('\n'),
-            transaction_id: transactionId,
-            amount: formatGBP(amount),
-          }),
-        }).catch(() => {})
-      );
+    if (window.KFD_NOTIFY?.endpoint()) {
+      tasks.push(window.KFD_NOTIFY.sendDonation(transactionId, amount).catch(() => false));
     }
 
     await Promise.all(tasks);

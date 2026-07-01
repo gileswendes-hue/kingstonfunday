@@ -174,7 +174,7 @@ window.KFD_BANDS = [
         }
       });
 
-      if (band.id === 'vardo-manor') {
+      if (card.dataset.band === 'vardo-manor') {
         card.addEventListener('dblclick', (e) => {
           e.preventDefault();
           e.stopPropagation();

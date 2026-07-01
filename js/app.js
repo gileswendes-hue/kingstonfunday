@@ -156,7 +156,7 @@
 
         } else if (Number(values.adults) < 1) {
 
-          occupancyError.textContent = 'At least one adult (17+) is required.';
+          occupancyError.textContent = 'At least one adult (16 and over) is required.';
 
         } else {
 
@@ -564,10 +564,20 @@
 
 
 
-    if (hasPayPal && (!(config.bookingSheetUrl || '').trim() || !(config.bookingSheetSecret || '').trim()) && sheetBanner) {
+    if (hasPayPal && sheetBanner) {
+      const sheetUrl = (config.bookingSheetUrl || '').trim();
+      const sheetSecret = (config.bookingSheetSecret || '').trim();
+      const missing = [];
+      if (!sheetUrl) missing.push('bookingSheetUrl');
+      if (!sheetSecret) missing.push('bookingSheetSecret');
 
-      sheetBanner.hidden = false;
-
+      if (missing.length) {
+        sheetBanner.hidden = false;
+        sheetBanner.textContent =
+          'Booking sheet not configured — add ' +
+          missing.join(' and ') +
+          ' to js/config.js or bookings will not be recorded.';
+      }
     }
 
 

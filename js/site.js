@@ -309,10 +309,10 @@
     initHeroMotion();
     initReveal();
     initLightbox();
-    initLineup();
     initPoster();
     initGallery();
     initMap();
+    initLineup();
   }
 
   if (document.readyState === 'loading') {

@@ -16,7 +16,7 @@
   let lastFocus = null;
 
   function endpoint() {
-    return (config.formspreeEndpoint || 'https://formspree.io/f/mykqpaag').trim();
+    return window.KFD_NOTIFY?.endpoint?.() || (config.formspreeEndpoint || 'https://formspree.io/f/mykqpaag').trim();
   }
 
   function showError(message) {
@@ -76,18 +76,20 @@
     submitBtn.textContent = 'Sending…';
 
     try {
-      const res = await fetch(endpoint(), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      const send = window.KFD_NOTIFY?.send || null;
+      const ok = send
+        ? await send(payload)
+        : (await fetch(endpoint(), {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+            body: JSON.stringify(payload),
+          })).ok;
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Message could not be sent. Please try again.');
+      if (!ok) {
+        throw new Error('Message could not be sent. Please try again.');
       }
 
       form.reset();
