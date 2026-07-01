@@ -72,8 +72,12 @@
 }
 
 [data-theme="sky"] .site-nav__brand,
+[data-theme="sky"] .site-nav__brand:hover,
+[data-theme="sky"] .site-nav__brand:focus-visible,
+[data-theme="sky"] .site-nav__brand span,
 [data-theme="sky"] .site-nav__link {
   color: var(--text);
+  text-decoration: none !important;
 }
 
 [data-theme="sky"] .site-nav__menu {
