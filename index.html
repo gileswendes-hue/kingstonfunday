@@ -62,20 +62,20 @@
           <button type="button" class="theme-bar__toggle" id="balloon-toggle" aria-pressed="false" aria-label="Toggle balloons" title="Balloons">🎈</button>
           <button type="button" class="theme-bar__toggle" id="weather-panel-toggle" aria-expanded="false" aria-controls="weather-panel" aria-label="Wind and rain" title="Wind &amp; rain">🌬️</button>
         </div>
-        <div class="theme-bar__panel" id="weather-panel" hidden>
-          <div class="theme-bar__row">
-            <label for="wind-speed">Wind</label>
-            <input type="range" id="wind-speed" min="0" max="100" value="40" aria-valuemin="0" aria-valuemax="100">
-          </div>
-          <div class="theme-bar__row">
-            <label for="rain-toggle">Rain</label>
-            <input type="checkbox" id="rain-toggle" aria-label="Toggle rain">
-          </div>
-        </div>
       </div>
       <button class="site-nav__toggle" type="button" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Open menu">
         <span></span><span></span><span></span>
       </button>
+    </div>
+    <div class="theme-bar__panel" id="weather-panel" hidden>
+      <div class="theme-bar__row">
+        <label for="wind-speed">Wind</label>
+        <input type="range" id="wind-speed" min="0" max="100" value="40" aria-valuemin="0" aria-valuemax="100">
+      </div>
+      <div class="theme-bar__row">
+        <label for="rain-toggle">Rain</label>
+        <input type="checkbox" id="rain-toggle" aria-label="Toggle rain">
+      </div>
     </div>
   </nav>
 
@@ -270,13 +270,13 @@
                     <span>Van</span>
                   </button>
                 </div>
-                <label class="pitch-nights">
-                  <span>Nights</span>
-                  <select id="nights-select">
-                    <option value="1">1</option>
-                    <option value="2" selected>2</option>
-                  </select>
-                </label>
+                <div class="pitch-control pitch-control--nights">
+                  <span class="pitch-control__label">Nights</span>
+                  <div class="pitch-control__track">
+                    <input type="range" id="nights-slider" class="pitch-control__slider" min="1" max="2" step="1" value="2" aria-label="Number of nights">
+                    <output class="pitch-control__bubble" id="nights-out" for="nights-slider">2</output>
+                  </div>
+                </div>
               </div>
 
               <div class="pitch-visual">
