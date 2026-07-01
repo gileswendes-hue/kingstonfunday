@@ -582,71 +582,41 @@ a:hover {
   font-weight: 500;
 }
 
-.pitch-control__row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 2.25rem;
-  align-items: center;
-  column-gap: 0.65rem;
+.pitch-control__track {
+  position: relative;
+  padding-bottom: 1.55rem;
 }
 
-.pitch-control__row input[type='range'] {
+.pitch-control__slider {
+  display: block;
   width: 100%;
-  accent-color: var(--orange);
-}
-
-.pitch-control__num {
-  min-width: 2.25rem;
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  line-height: 1;
-  color: var(--orange);
-  text-align: right;
-}
-
-.pitch-control__num--input {
-  width: 2.25rem;
-  padding: 0;
-  border: none;
-  background: transparent;
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  line-height: 1;
-  color: var(--orange);
-  text-align: right;
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
-.pitch-control__num--input::-webkit-outer-spin-button,
-.pitch-control__num--input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
   margin: 0;
+  accent-color: var(--orange);
+  cursor: pointer;
+}
+
+.pitch-control__bubble {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--orange);
+  pointer-events: none;
+  white-space: nowrap;
 }
 
 .pitch-people__row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 2.25rem;
-  grid-template-rows: auto auto;
-  column-gap: 0.65rem;
-  row-gap: 0.25rem;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr) minmax(5rem, 6.5rem);
+  gap: 1rem;
+  align-items: end;
 }
 
-.pitch-people__row > .pitch-control {
-  grid-column: 1;
-  grid-row: 1 / span 2;
-}
-
-.pitch-control__label--dogs {
-  grid-column: 2;
-  grid-row: 1;
-  align-self: end;
-}
-
-.pitch-control__num--dogs {
-  grid-column: 2;
-  grid-row: 2;
-  justify-self: end;
+.pitch-control--dogs .pitch-control__track {
+  padding-bottom: 1.55rem;
 }
 
 @media (min-width: 540px) {
