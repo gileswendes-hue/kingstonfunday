@@ -11,12 +11,17 @@
   <meta name="theme-color" content="#0a0a0f">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/themes.css">
 </head>
 <body>
+  <div id="ceefax-bar" class="ceefax-bar" hidden aria-hidden="true">
+    <span class="ceefax-bar__page">P100</span>
+    <span class="ceefax-bar__title">KINGSTON FUN DAY</span>
+    <span class="ceefax-bar__brand">CEEFAX</span>
+  </div>
   <div id="sky-scene" class="sky-scene" aria-hidden="true">
     <div class="sky-scene__clouds">
       <div class="cloud cloud--1"></div>
@@ -91,7 +96,7 @@
             <ul class="about-facts">
               <li><strong>Saturday 1 August 2026</strong> — main event day</li>
               <li><strong>10 bands</strong> on the poster, one marquee, maximum energy</li>
-              <li><strong>Camping</strong> Friday 31 July – Sunday 2th August (book below)</li>
+              <li><strong>Camping</strong> Friday 31 July – Sunday 2 August (book below)</li>
               <li><strong>Location</strong> TQ7 4QD · ///hedge.tidal.admits</li>
             </ul>
           </div>
@@ -166,7 +171,7 @@
               <div><dt>Pitch fee</dt><dd>£15 / night</dd></div>
               <div><dt>Included</dt><dd>2 people per pitch</dd></div>
               <div><dt>Extra adults (16 and over)</dt><dd>£4 / person / night</dd></div>
-              <div><dt>Children (under 16s)</dt><dd>Free</dd></div>
+              <div><dt>Children (Under 16s)</dt><dd>Free</dd></div>
               <div><dt>Dogs</dt><dd>Max 6 per booking</dd></div>
               <div><dt>Printing &amp; postage</dt><dd>£2 per booking</dd></div>
             </dl>
@@ -185,7 +190,7 @@
         </div>
 
         <div id="sheet-banner" class="banner banner--warning" hidden>
-          Booking sheet not configured — add your Google Apps Script URL to <code>bookingSheetUrl</code> in <code>js/config.js</code> or bookings will not be recorded.
+          Booking sheet not configured — add your Google Apps Script URL and <code>bookingSheetSecret</code> to <code>js/config.js</code> or bookings will not be recorded.
         </div>
 
         <form id="booking-form" class="booking-form reveal" novalidate>
@@ -249,7 +254,7 @@
 
               <div class="pitch-people">
                 <div class="pitch-control">
-                  <span class="pitch-control__label">Adults (17+)</span>
+                  <span class="pitch-control__label">Extra adults (16 and over)</span>
                   <div class="pitch-control__track">
                     <input type="range" id="adults-slider" class="pitch-control__slider" min="1" max="18" value="1">
                     <output class="pitch-control__bubble" id="adults-out" for="adults-slider">1</output>
@@ -257,7 +262,7 @@
                 </div>
                 <div class="pitch-people__row">
                   <div class="pitch-control">
-                    <span class="pitch-control__label">Children (under 16)</span>
+                    <span class="pitch-control__label">Children (Under 16s)</span>
                     <div class="pitch-control__track">
                       <input type="range" id="children-slider" class="pitch-control__slider" min="0" max="18" value="0">
                       <output class="pitch-control__bubble" id="children-out" for="children-slider">0</output>
@@ -438,6 +443,7 @@
 
   <script src="js/config.js"></script>
   <script src="js/sheet-log.js"></script>
+  <script src="js/notify.js"></script>
   <script src="js/terms.js"></script>
   <script src="js/paypal-shared.js"></script>
   <script src="js/bands.js"></script>
