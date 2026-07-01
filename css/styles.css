@@ -950,6 +950,124 @@ body.contact-open {
   min-height: 45px;
 }
 
+/* ——— Terms modal (camping) ——— */
+body.terms-open {
+  overflow: hidden;
+}
+
+.terms-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.terms-modal[hidden] {
+  display: none;
+}
+
+.terms-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.terms-modal__panel {
+  position: relative;
+  width: min(640px, 100%);
+  max-height: min(92vh, 820px);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1.35rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+}
+
+.terms-modal__title {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  letter-spacing: 0.04em;
+}
+
+.terms-modal__times {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.terms-modal__body {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  padding-right: 0.35rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.terms-modal__body h3 {
+  margin: 1.1rem 0 0.45rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.terms-modal__body h3:first-child {
+  margin-top: 0;
+}
+
+.terms-modal__body ul {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+
+.terms-modal__body li + li {
+  margin-top: 0.45rem;
+}
+
+.terms-modal__emergency {
+  margin: 1.25rem 0 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
+}
+
+.terms-modal__countdown {
+  margin: 0 0 0.65rem;
+  min-height: 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--warning);
+  text-align: center;
+}
+
+.terms-modal__accept {
+  width: 100%;
+}
+
+.terms-modal__accept:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.paypal-section__note {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.banner--warning {
+  border-color: rgba(255, 180, 0, 0.45);
+  background: rgba(255, 180, 0, 0.08);
+  color: var(--text);
+}
+
 /* ——— Contact modal ——— */
 .contact-modal {
   position: fixed;
@@ -1684,6 +1802,7 @@ body.lightbox-open {
 
 /* ——— Fixed overlays (must stay viewport-fixed) ——— */
 body > .donate-modal,
+body > .terms-modal,
 body > .contact-modal,
 body > .lightbox,
 body > .theme-bar,
