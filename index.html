@@ -168,7 +168,7 @@
               <div><dt>Extra adults (17+)</dt><dd>£4 / person / night</dd></div>
               <div><dt>Children (under 16)</dt><dd>Free</dd></div>
               <div><dt>Dogs</dt><dd>Max 6 per booking</dd></div>
-              <div><dt>Printing &amp; postage</dt><dd>£3 per booking</dd></div>
+              <div><dt>Printing &amp; postage</dt><dd>£2 per booking</dd></div>
             </dl>
           </article>
         </div>
@@ -246,21 +246,26 @@
               <div class="pitch-people">
                 <div class="pitch-control">
                   <span class="pitch-control__label">Adults (17+)</span>
-                  <div class="pitch-control__row">
-                    <input type="range" id="adults-slider" min="1" max="18" value="1">
-                    <output class="pitch-control__num" id="adults-out" for="adults-slider">1</output>
+                  <div class="pitch-control__track">
+                    <input type="range" id="adults-slider" class="pitch-control__slider" min="1" max="18" value="1">
+                    <output class="pitch-control__bubble" id="adults-out" for="adults-slider">1</output>
                   </div>
                 </div>
                 <div class="pitch-people__row">
                   <div class="pitch-control">
                     <span class="pitch-control__label">Children (under 16)</span>
-                    <div class="pitch-control__row">
-                      <input type="range" id="children-slider" min="0" max="18" value="0">
-                      <output class="pitch-control__num" id="children-out" for="children-slider">0</output>
+                    <div class="pitch-control__track">
+                      <input type="range" id="children-slider" class="pitch-control__slider" min="0" max="18" value="0">
+                      <output class="pitch-control__bubble" id="children-out" for="children-slider">0</output>
                     </div>
                   </div>
-                  <span class="pitch-control__label pitch-control__label--dogs">Dogs</span>
-                  <input type="number" class="pitch-control__num pitch-control__num--input pitch-control__num--dogs" id="dogs-input" name="dogs" min="0" max="6" value="0" inputmode="numeric" aria-label="Number of dogs">
+                  <div class="pitch-control pitch-control--dogs">
+                    <span class="pitch-control__label">Dogs</span>
+                    <div class="pitch-control__track">
+                      <input type="range" id="dogs-slider" class="pitch-control__slider" min="0" max="6" value="0" aria-label="Number of dogs">
+                      <output class="pitch-control__bubble" id="dogs-out" for="dogs-slider">0</output>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -268,6 +273,7 @@
             <input type="hidden" id="nights" name="nights" value="2">
             <input type="hidden" id="adults" name="adults" value="1">
             <input type="hidden" id="children" name="children" value="0">
+            <input type="hidden" id="dogs-input" name="dogs" value="0">
             <div class="visually-hidden">
               <label><input type="radio" name="accommodation" value="tent" checked> Tent</label>
               <label><input type="radio" name="accommodation" value="campervan"> Campervan</label>
@@ -282,7 +288,6 @@
           </aside>
 
           <div id="paypal-section" class="paypal-section">
-            <p class="paypal-note">Pay securely by debit or credit card — your details above are passed to checkout so you won't need to enter them again.</p>
             <p id="payment-error" class="field-error payment-error" role="alert" hidden></p>
             <div id="card-button"></div>
           </div>
@@ -292,7 +297,7 @@
   </main>
 
   <footer class="footer">
-    <p>Kingston Fun Day · Community event ·
+    <p>Kingston Fun Day ·
       <a href="https://www.instagram.com/kfd_kingstonfunday/" target="_blank" rel="noopener">Instagram</a> ·
       <button type="button" class="footer__contact" id="contact-open-footer">Contact</button>
     </p>
