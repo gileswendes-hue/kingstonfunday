@@ -247,17 +247,18 @@
                   <input type="range" id="adults-slider" min="1" max="18" value="1">
                   <output id="adults-out">1</output>
                 </label>
-                <label class="pitch-people__slider">
-                  <span>Children (under 16)</span>
-                  <input type="range" id="children-slider" min="0" max="18" value="0">
-                  <output id="children-out">0</output>
-                </label>
+                <div class="pitch-people__row">
+                  <label class="pitch-people__slider">
+                    <span>Children (under 16)</span>
+                    <input type="range" id="children-slider" min="0" max="18" value="0">
+                    <output id="children-out">0</output>
+                  </label>
+                  <label class="pitch-dogs__field">
+                    <span>Dogs</span>
+                    <input type="number" id="dogs-input" name="dogs" min="0" max="6" value="0" inputmode="numeric">
+                  </label>
+                </div>
               </div>
-
-              <label class="pitch-dogs__field">
-                <span>Dogs</span>
-                <input type="number" id="dogs-input" name="dogs" min="0" max="6" value="0" inputmode="numeric">
-              </label>
             </div>
 
             <input type="hidden" id="nights" name="nights" value="2">
