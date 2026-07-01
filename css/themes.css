@@ -429,36 +429,21 @@ body > footer {
   100% { transform: rotate(-6deg) skewX(-5deg); }
 }
 
-@keyframes balloon-pop-burst {
-  0% {
-    transform: translate(-50%, -50%) scale(0.7);
-    opacity: 1;
-  }
-  25% {
-    transform: translate(-50%, -50%) scale(1.25);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1.8);
-    opacity: 0;
-  }
-}
-
 @keyframes balloon-pop-flash {
-  0% { opacity: 0.95; transform: translate(-50%, -50%) scale(0.4); }
-  40% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.4); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
+  0% { opacity: 0.95; transform: translate(-50%, -50%) scale(0.35); }
+  35% { opacity: 0.75; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.6); }
 }
 
 @keyframes balloon-pop-ring {
   0% {
     opacity: 0.85;
-    transform: translate(-50%, -50%) scale(0.5);
+    transform: translate(-50%, -50%) scale(0.45);
     border-width: 3px;
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(2.4);
+    transform: translate(-50%, -50%) scale(2.2);
     border-width: 1px;
   }
 }
@@ -470,7 +455,7 @@ body > footer {
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) rotate(var(--bit-angle, 0deg)) translateY(calc(var(--bit-dist, 30px) * -1)) scale(0.2);
+    transform: translate(-50%, -50%) rotate(var(--bit-angle, 0deg)) translateY(calc(var(--bit-dist, 30px) * -1)) scale(0.15);
   }
 }
 
@@ -478,51 +463,38 @@ body > footer {
   position: fixed;
   z-index: 9999;
   pointer-events: none;
-  width: var(--balloon-size, 36px);
-  height: calc(var(--balloon-size, 36px) * 1.22);
+  width: 0;
+  height: 0;
   margin: 0;
-  animation: balloon-pop-burst 0.55s ease-out forwards;
+  overflow: visible;
+  transform: translate(-50%, -50%);
 }
 
 .balloon-pop-fx__flash {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: calc(var(--balloon-size, 36px) * 2.2);
-  height: calc(var(--balloon-size, 36px) * 2.2);
+  left: 0;
+  top: 0;
+  width: calc(var(--balloon-size, 36px) * 2.4);
+  height: calc(var(--balloon-size, 36px) * 2.4);
   border-radius: 50%;
   background: radial-gradient(
     circle,
     rgba(255, 255, 255, 0.95) 0%,
-    hsl(var(--balloon-hue, 330) 90% 70% / 0.55) 35%,
-    transparent 70%
+    hsl(var(--balloon-hue, 330) 90% 70% / 0.45) 30%,
+    transparent 65%
   );
-  animation: balloon-pop-flash 0.35s ease-out forwards;
-}
-
-.balloon-pop-fx__body {
-  position: absolute;
-  inset: 0;
-  border-radius: 50% 50% 48% 48% / 42% 42% 58% 58%;
-  background:
-    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.9) 0%, transparent 38%),
-    linear-gradient(
-      145deg,
-      hsl(var(--balloon-hue, 330) 82% 68%) 0%,
-      hsl(var(--balloon-hue, 330) 70% 42%) 100%
-    );
-  box-shadow: 0 0 24px hsl(var(--balloon-hue, 330) 80% 55% / 0.65);
+  animation: balloon-pop-flash 0.32s ease-out forwards;
 }
 
 .balloon-pop-fx__ring {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  left: 0;
+  top: 0;
   width: calc(var(--balloon-size, 36px) * 1.1);
   height: calc(var(--balloon-size, 36px) * 1.1);
   border: 3px solid hsl(var(--balloon-hue, 330) 75% 58% / 0.75);
   border-radius: 50%;
-  animation: balloon-pop-ring 0.5s ease-out forwards;
+  animation: balloon-pop-ring 0.48s ease-out forwards;
 }
 
 .balloon-pop-fx__ring--delay {
@@ -532,14 +504,14 @@ body > footer {
 
 .balloon-pop-fx__bit {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 6px;
-  height: 6px;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: hsl(var(--balloon-hue, 330) 78% 55%);
-  box-shadow: 0 0 6px hsl(var(--balloon-hue, 330) 80% 60% / 0.8);
-  animation: balloon-pop-bit 0.48s ease-out forwards;
+  box-shadow: 0 0 5px hsl(var(--balloon-hue, 330) 80% 60% / 0.75);
+  animation: balloon-pop-bit 0.45s ease-out forwards;
 }
 
 .balloon.is-popping {
@@ -578,4 +550,269 @@ body > footer {
   .balloon__float {
     animation-duration: 48s !important;
   }
+}
+
+/* ——— Theme: Ceefax (secret — double-click Vardo Manor) ——— */
+[data-theme="ceefax"] {
+  --bg: #000084;
+  --bg-card: #000050;
+  --bg-card-solid: #000050;
+  --bg-card-hover: #0000aa;
+  --bg-input: #000040;
+  --text: #ffff00;
+  --text-muted: #00ffff;
+  --pink: #ff0000;
+  --pink-glow: transparent;
+  --green: #00ff00;
+  --blue: #00ffff;
+  --orange: #ffff00;
+  --border: #ffffff;
+  --error: #ff0000;
+  --warning: #ffff00;
+  --radius: 0;
+  --nav-bg: #000084;
+  --font-display: "VT323", "Courier New", Courier, monospace;
+  --font-body: "VT323", "Courier New", Courier, monospace;
+  --hero-overlay: #000084;
+}
+
+[data-theme="ceefax"] body {
+  background: var(--bg);
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+[data-theme="ceefax"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.12) 0,
+    rgba(0, 0, 0, 0.12) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.4;
+}
+
+.ceefax-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.35rem 0.75rem;
+  font-family: "VT323", "Courier New", Courier, monospace;
+  font-size: 1.35rem;
+  letter-spacing: 0.08em;
+  color: #000084;
+  background: #00ffff;
+  border-bottom: 3px solid #ffffff;
+  text-transform: uppercase;
+}
+
+.ceefax-bar[hidden] {
+  display: none;
+}
+
+.ceefax-bar__page {
+  color: #ffff00;
+  background: #000084;
+  padding: 0 0.4rem;
+  border: 2px solid #ffffff;
+}
+
+.ceefax-bar__title {
+  flex: 1;
+  font-weight: bold;
+}
+
+[data-theme="ceefax"] .sky-scene,
+[data-theme="ceefax"] .balloon-layer,
+[data-theme="ceefax"] .rain-overlay.is-active {
+  display: none !important;
+}
+
+[data-theme="ceefax"] html {
+  scroll-padding-top: 5.5rem;
+}
+
+[data-theme="ceefax"] body {
+  padding-top: 2.25rem;
+}
+
+[data-theme="ceefax"] .hero__bg {
+  opacity: 0.12;
+  filter: contrast(1.8) saturate(0);
+}
+
+[data-theme="ceefax"] .hero__overlay {
+  background: var(--bg);
+}
+
+[data-theme="ceefax"] .hero__title,
+[data-theme="ceefax"] .section__title,
+[data-theme="ceefax"] .band-card__name,
+[data-theme="ceefax"] .donate-modal__title,
+[data-theme="ceefax"] .contact-modal__title,
+[data-theme="ceefax"] .terms-modal__title {
+  color: #ffff00;
+  text-shadow: none;
+  font-family: var(--font-display);
+  letter-spacing: 0.06em;
+}
+
+[data-theme="ceefax"] a {
+  color: #00ffff;
+}
+
+[data-theme="ceefax"] a:hover {
+  color: #ffffff;
+  background: #0000aa;
+  text-decoration: none;
+}
+
+[data-theme="ceefax"] .site-nav,
+[data-theme="ceefax"] .site-nav.is-scrolled {
+  top: 2.25rem;
+  background: #000084;
+  border-bottom: 2px solid #ffffff;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+[data-theme="ceefax"] .site-nav__brand,
+[data-theme="ceefax"] .site-nav__link,
+[data-theme="ceefax"] .site-nav__contact,
+[data-theme="ceefax"] .site-nav__donate {
+  color: #ffff00;
+  font-family: var(--font-body);
+}
+
+[data-theme="ceefax"] .info-card,
+[data-theme="ceefax"] .booking-form,
+[data-theme="ceefax"] .map-wrap,
+[data-theme="ceefax"] .thank-you__card,
+[data-theme="ceefax"] .countdown__unit,
+[data-theme="ceefax"] .band-card__front,
+[data-theme="ceefax"] .band-card__back,
+[data-theme="ceefax"] .donate-modal__panel,
+[data-theme="ceefax"] .contact-modal__panel,
+[data-theme="ceefax"] .terms-modal__panel,
+[data-theme="ceefax"] .price-summary,
+[data-theme="ceefax"] .banner,
+[data-theme="ceefax"] .theme-bar__panel {
+  background: var(--bg-card);
+  border: 2px solid #ffffff;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+[data-theme="ceefax"] .field-row input,
+[data-theme="ceefax"] .field-row select,
+[data-theme="ceefax"] .field-row textarea {
+  background: var(--bg-input);
+  border: 2px solid #00ffff;
+  border-radius: 0;
+  color: #00ff00;
+  font-family: var(--font-body);
+}
+
+[data-theme="ceefax"] .btn,
+[data-theme="ceefax"] .btn--primary {
+  border-radius: 0;
+  border: 2px solid #ffffff;
+  background: #000084;
+  color: #ffff00;
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  box-shadow: none;
+}
+
+[data-theme="ceefax"] .btn--primary {
+  background: #00ff00;
+  color: #000084;
+}
+
+[data-theme="ceefax"] .btn:hover,
+[data-theme="ceefax"] .btn--primary:hover {
+  background: #ffff00;
+  color: #000084;
+}
+
+[data-theme="ceefax"] .band-card__style,
+[data-theme="ceefax"] .band-card__tap {
+  color: #00ffff;
+}
+
+[data-theme="ceefax"] .band-card__link {
+  color: #ffff00;
+  border: 1px solid #00ffff;
+  padding: 0.25rem 0.5rem;
+  display: inline-block;
+  margin: 0.15rem;
+}
+
+[data-theme="ceefax"] .footer {
+  background: #000084;
+  border-top: 2px solid #ffffff;
+}
+
+[data-theme="ceefax"] .theme-bar {
+  background: #000050;
+  border: 2px solid #ffffff;
+  border-radius: 0;
+}
+
+[data-theme="ceefax"] .theme-bar__toggle {
+  border-radius: 0;
+  border: 1px solid #00ffff;
+  background: #000084;
+}
+
+[data-theme="ceefax"] .text-pink {
+  color: #ff0000;
+}
+
+[data-theme="ceefax"] .price-total strong,
+[data-theme="ceefax"] .countdown__number {
+  color: #00ff00;
+}
+
+[data-theme="ceefax"] .gallery__item {
+  border: 2px solid #ffffff;
+  border-radius: 0;
+}
+
+[data-theme="ceefax"] .section--lineup::before {
+  content: "LINE UP >>>";
+  display: block;
+  margin-bottom: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  color: #000084;
+  background: #ffff00;
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  letter-spacing: 0.1em;
+  width: fit-content;
+}
+
+[data-theme="ceefax"] .section--camping::before {
+  content: "CAMPING BOOKING >>>";
+  display: block;
+  margin-bottom: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  color: #000084;
+  background: #00ff00;
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  letter-spacing: 0.1em;
+  width: fit-content;
 }
