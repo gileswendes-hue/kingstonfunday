@@ -24,8 +24,14 @@
       <div class="cloud cloud--3"></div>
     </div>
   </div>
-  <div id="balloon-layer" class="balloon-layer is-active" aria-hidden="true">
-    <div id="sky-balloons" class="balloon-layer__inner"></div>
+  <div id="balloon-layer-back" class="balloon-layer balloon-layer--back" aria-hidden="true">
+    <div id="sky-balloons-back" class="balloon-layer__inner"></div>
+  </div>
+  <div id="balloon-layer-mid" class="balloon-layer balloon-layer--mid" aria-hidden="true">
+    <div id="sky-balloons-mid" class="balloon-layer__inner"></div>
+  </div>
+  <div id="balloon-layer-front" class="balloon-layer balloon-layer--front" aria-hidden="true">
+    <div id="sky-balloons-front" class="balloon-layer__inner"></div>
   </div>
   <canvas id="rain-canvas" class="rain-overlay" aria-hidden="true"></canvas>
   <nav class="site-nav" aria-label="Main">
@@ -85,8 +91,8 @@
             <ul class="about-facts">
               <li><strong>Saturday 1 August 2026</strong> — main event day</li>
               <li><strong>10 bands</strong> on the poster, one marquee, maximum energy</li>
-              <li><strong>Camping</strong> Fri 31st July – Sun 2nd August (book below)</li>
-              <li><strong>Location</strong> Kingston Recreation Ground, Knightsbridge</li>
+              <li><strong>Camping</strong> Fri 2 Aug – Sun 4 Aug (book below)</li>
+              <li><strong>Location</strong> TQ7 4QD · ///hedge.tidal.admits</li>
             </ul>
           </div>
           <figure class="about-poster reveal">
@@ -122,12 +128,13 @@
       <div class="container">
         <header class="section-header reveal">
           <h2 class="section-title">Find us</h2>
-          <p class="section-subtitle">Kingston Recreation Ground, Knightsbridge · Kingston village, South Devon TQ7</p>
+          <p class="section-subtitle">Kingston Recreation Ground · TQ7 4QD · ///hedge.tidal.admits</p>
         </header>
         <div class="map-wrap reveal">
           <div id="map" class="map" aria-label="Interactive map showing Kingston Recreation Ground"></div>
           <div class="map-actions">
-            <a class="btn btn--primary" id="map-directions" href="#" target="_blank" rel="noopener">Get directions</a>
+            <a class="btn btn--primary" id="map-directions-postcode" href="#" target="_blank" rel="noopener">Directions (TQ7 4QD)</a>
+            <a class="btn btn--ghost" id="map-directions-w3w" href="https://what3words.com/hedge.tidal.admits" target="_blank" rel="noopener">what3words · ///hedge.tidal.admits</a>
             <p class="map-hint">Scroll/zoom enabled after you click the map. Single-track lanes — allow extra time!</p>
           </div>
         </div>
@@ -145,19 +152,20 @@
           <article class="info-card">
             <h3>Camping info</h3>
             <ul>
-              <li>Arrive from <strong>4:00 PM Friday 31st July</strong></li>
-              <li>Depart by <strong>11:00 AM Sunday 2nd August</strong></li>
-              <li>Tent or campervan — one pitch, up to 6 people</li>
+              <li>Arrive from <strong>4:00 PM Friday 2 August</strong></li>
+              <li>Depart by <strong>11:00 AM Sunday 4 August</strong></li>
+              <li>Tent or campervan — up to 6 people per pitch (extra pitch added automatically)</li>
               <li>Passes &amp; wristbands posted before the event</li>
             </ul>
           </article>
           <article class="info-card info-card--pricing">
             <h3>Pricing</h3>
             <dl class="price-list">
-              <div><dt>Pitch fee</dt><dd>£12 / night</dd></div>
-              <div><dt>Included</dt><dd>Up to 4 people</dd></div>
-              <div><dt>Extra adults (17+)</dt><dd>£3 / person / night</dd></div>
+              <div><dt>Pitch fee</dt><dd>£15 / night</dd></div>
+              <div><dt>Included</dt><dd>2 people per pitch</dd></div>
+              <div><dt>Extra adults (17+)</dt><dd>£4 / person / night</dd></div>
               <div><dt>Children (under 16)</dt><dd>Free</dd></div>
+              <div><dt>Dogs</dt><dd>Max 6 per booking</dd></div>
               <div><dt>Printing &amp; postage</dt><dd>£3 per booking</dd></div>
             </dl>
           </article>
@@ -197,45 +205,69 @@
             </div>
           </fieldset>
 
-          <fieldset class="form-group">
+          <fieldset class="form-group pitch-dashboard-wrap">
             <legend>Your pitch</legend>
-            <div class="field-row field-row--inline">
-              <div>
-                <label for="nights">Number of nights <span aria-hidden="true">*</span></label>
-                <select id="nights" name="nights" required>
-                  <option value="1">1 night</option>
-                  <option value="2" selected>2 nights (Fri–Sun)</option>
-                </select>
-              </div>
-              <div>
-                <label>Accommodation <span aria-hidden="true">*</span></label>
-                <div class="radio-group">
-                  <label class="radio-label">
-                    <input type="radio" name="accommodation" value="tent" checked>
-                    Tent
-                  </label>
-                  <label class="radio-label">
-                    <input type="radio" name="accommodation" value="campervan">
-                    Campervan
-                  </label>
+
+            <div id="pitch-dashboard" class="pitch-dashboard">
+              <div class="pitch-toolbar">
+                <div class="pitch-type" role="group" aria-label="Accommodation type">
+                  <button type="button" class="pitch-type-btn is-active" data-type="tent" aria-pressed="true">
+                    <svg class="pitch-neon-icon" viewBox="0 0 48 48" aria-hidden="true">
+                      <polygon class="pitch-neon-stroke" points="24,8 42,40 6,40" fill="none" stroke-width="2"/>
+                    </svg>
+                    <span>Tent</span>
+                  </button>
+                  <button type="button" class="pitch-type-btn" data-type="campervan" aria-pressed="false">
+                    <svg class="pitch-neon-icon" viewBox="0 0 48 48" aria-hidden="true">
+                      <rect class="pitch-neon-stroke" x="6" y="16" width="30" height="16" rx="2" fill="none" stroke-width="2"/>
+                      <path class="pitch-neon-stroke" d="M36 18 h6 v12 h-6 z" fill="none" stroke-width="1.8"/>
+                      <circle class="pitch-neon-stroke" cx="14" cy="34" r="3" fill="none" stroke-width="1.6"/>
+                      <circle class="pitch-neon-stroke" cx="30" cy="34" r="3" fill="none" stroke-width="1.6"/>
+                    </svg>
+                    <span>Van</span>
+                  </button>
                 </div>
+                <label class="pitch-nights">
+                  <span>Nights</span>
+                  <select id="nights-select">
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                  </select>
+                </label>
               </div>
+
+              <div class="pitch-visual">
+                <div id="pitch-units" class="pitch-units" aria-live="polite"></div>
+                <div id="pitch-dogs-outside" class="pitch-dogs-outside" hidden></div>
+              </div>
+
+              <div class="pitch-people">
+                <label class="pitch-people__slider">
+                  <span>Adults (17+)</span>
+                  <input type="range" id="adults-slider" min="1" max="18" value="1">
+                  <output id="adults-out">1</output>
+                </label>
+                <label class="pitch-people__slider">
+                  <span>Children (under 16)</span>
+                  <input type="range" id="children-slider" min="0" max="18" value="0">
+                  <output id="children-out">0</output>
+                </label>
+              </div>
+
+              <label class="pitch-dogs__field">
+                <span>Dogs</span>
+                <input type="number" id="dogs-input" name="dogs" min="0" max="6" value="0" inputmode="numeric">
+              </label>
             </div>
-            <div class="field-row field-row--inline field-row--counts">
-              <div>
-                <label for="adults">Adults (17+) <span aria-hidden="true">*</span></label>
-                <input type="number" id="adults" name="adults" min="1" max="6" value="1" required>
-              </div>
-              <div>
-                <label for="children">Children (under 16)</label>
-                <input type="number" id="children" name="children" min="0" max="5" value="0">
-              </div>
-              <div>
-                <label for="dogs">Dogs</label>
-                <input type="number" id="dogs" name="dogs" min="0" max="3" value="0">
-              </div>
+
+            <input type="hidden" id="nights" name="nights" value="2">
+            <input type="hidden" id="adults" name="adults" value="1">
+            <input type="hidden" id="children" name="children" value="0">
+            <div class="visually-hidden">
+              <label><input type="radio" name="accommodation" value="tent" checked> Tent</label>
+              <label><input type="radio" name="accommodation" value="campervan"> Campervan</label>
             </div>
-            <p id="occupancy-error" class="field-error" role="alert" hidden>Maximum 6 people per pitch (adults + children).</p>
+            <p id="occupancy-error" class="field-error" role="alert" hidden>At least one adult is required. Maximum 6 dogs per booking.</p>
           </fieldset>
 
           <aside class="price-summary" aria-live="polite">
@@ -245,7 +277,7 @@
           </aside>
 
           <div id="paypal-section" class="paypal-section">
-            <p class="paypal-note">Pay securely by debit or credit card.</p>
+            <p class="paypal-note">Pay securely by debit or credit card — your details above are passed to checkout so you won't need to enter them again.</p>
             <p id="payment-error" class="field-error payment-error" role="alert" hidden></p>
             <div id="card-button"></div>
           </div>
@@ -255,7 +287,7 @@
   </main>
 
   <footer class="footer">
-    <p>Kingston Fun Day ·
+    <p>Kingston Fun Day · Community event ·
       <a href="https://www.instagram.com/kfd_kingstonfunday/" target="_blank" rel="noopener">Instagram</a> ·
       <button type="button" class="footer__contact" id="contact-open-footer">Contact</button>
     </p>
@@ -271,7 +303,7 @@
   <div class="theme-bar">
     <div class="theme-bar__buttons">
       <button type="button" class="theme-bar__toggle" id="theme-toggle" aria-label="Switch to sky theme">☀️</button>
-      <button type="button" class="theme-bar__toggle" id="balloon-toggle" aria-pressed="true" aria-label="Toggle balloons" title="Balloons">🎈</button>
+      <button type="button" class="theme-bar__toggle" id="balloon-toggle" aria-pressed="false" aria-label="Toggle balloons" title="Balloons">🎈</button>
       <button type="button" class="theme-bar__toggle" id="weather-panel-toggle" aria-expanded="false" aria-controls="weather-panel" aria-label="Wind and rain" title="Wind &amp; rain">🌬️</button>
     </div>
     <div class="theme-bar__panel" id="weather-panel" hidden>
@@ -344,6 +376,7 @@
   <script src="js/bands.js"></script>
   <script src="js/gallery.js"></script>
   <script src="js/pricing.js"></script>
+  <script src="js/booking-ui.js" defer></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
   <script src="js/site.js" defer></script>
   <script src="js/app.js" defer></script>
