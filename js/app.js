@@ -22,6 +22,8 @@
 
   const configBanner = document.getElementById('config-banner');
 
+  const sheetBanner = document.getElementById('sheet-banner');
+
   const paypalSection = document.getElementById('paypal-section');
 
   const paymentError = document.getElementById('payment-error');
@@ -240,6 +242,8 @@
 
       breakdown: quote.breakdown.map((l) => `${l.label}: ${formatGBP(l.amount)}`).join(' | '),
 
+      terms_accepted_at: window.KFD_TERMS?.getAcceptedAt?.() || new Date().toISOString(),
+
       booked_at: new Date().toISOString(),
 
     };
@@ -280,6 +284,7 @@
       body: JSON.stringify({
         _subject: `KFD Camping — ${values.name} (${quote.pitchCount} pitch${quote.pitchCount > 1 ? 'es' : ''})`,
         _template: 'table',
+        _replyto: values.email,
         message: body,
         ...record,
       }),
@@ -288,6 +293,11 @@
 
   async function notifyOrganiser(values, quote, transactionId) {
     const record = buildBookingRecord(values, quote, transactionId);
+
+    try {
+      sessionStorage.setItem('kfd-booking-' + transactionId, JSON.stringify(record));
+    } catch (_) {}
+
     const tasks = [window.KFD_SHEET.log(record)];
 
     const email = config.organiserEmail;
@@ -388,25 +398,39 @@
 
 
 
-    return actions.order.create(buildOrderPayload()).catch((err) => {
+    const ensureTerms = window.KFD_TERMS?.ensureAccepted || (() => Promise.resolve());
 
-      console.error('PayPal createOrder failed:', err);
 
-      const detail = parsePayPalError(err);
 
-      showPaymentError(
+    return ensureTerms()
 
-        detail
+      .then(() => actions.order.create(buildOrderPayload()))
 
-          ? `Checkout error: ${detail}`
+      .catch((err) => {
 
-          : 'Could not start checkout. Please try again or contact us.'
+        if (err && err.message === 'Form incomplete') throw err;
 
-      );
+        if (err && err.message !== 'Terms not accepted') {
 
-      throw err;
+          console.error('PayPal createOrder failed:', err);
 
-    });
+          const detail = parsePayPalError(err);
+
+          showPaymentError(
+
+            detail
+
+              ? `Checkout error: ${detail}`
+
+              : 'Could not start checkout. Please try again or contact us.'
+
+          );
+
+        }
+
+        throw err;
+
+      });
 
   }
 
@@ -578,6 +602,14 @@
       configBanner.textContent =
 
         'PayPal is in SANDBOX mode — use sandbox test accounts only. Set paypalEnvironment to "production" for real payments.';
+
+    }
+
+
+
+    if (hasPayPal && !(config.bookingSheetUrl || '').trim() && sheetBanner) {
+
+      sheetBanner.hidden = false;
 
     }
 
