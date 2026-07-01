@@ -25,6 +25,7 @@
   if (ref) {
     document.getElementById('reference-line').hidden = false;
     document.getElementById('paypal-ref').textContent = ref;
+    window.KFD_SHEET?.flushPending?.(ref);
   }
 
   async function notifyLegacyReturn() {

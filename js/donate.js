@@ -52,25 +52,38 @@
   }
 
   async function notifyDonation(transactionId, amount) {
-    const email = config.organiserEmail;
-    if (!email) return;
+    const record = {
+      type: 'donation',
+      paypal_reference: transactionId,
+      amount: formatGBP(amount),
+      donated_at: new Date().toISOString(),
+    };
 
-    await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(email), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        _subject: `KFD Donation — ${formatGBP(amount)}`,
-        _template: 'box',
-        message: [
-          'New donation received',
-          '',
-          `Amount: ${formatGBP(amount)}`,
-          `Reference: ${transactionId}`,
-        ].join('\n'),
-        transaction_id: transactionId,
-        amount: formatGBP(amount),
-      }),
-    }).catch(() => {});
+    const tasks = [window.KFD_SHEET.log(record)];
+
+    const email = config.organiserEmail;
+    if (email) {
+      tasks.push(
+        fetch('https://formsubmit.co/ajax/' + encodeURIComponent(email), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            _subject: `KFD Donation — ${formatGBP(amount)}`,
+            _template: 'box',
+            message: [
+              'New donation received',
+              '',
+              `Amount: ${formatGBP(amount)}`,
+              `Reference: ${transactionId}`,
+            ].join('\n'),
+            transaction_id: transactionId,
+            amount: formatGBP(amount),
+          }),
+        }).catch(() => {})
+      );
+    }
+
+    await Promise.all(tasks);
   }
 
   function renderCardButton() {

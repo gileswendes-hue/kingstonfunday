@@ -248,106 +248,54 @@
 
 
 
-  async function notifyOrganiser(values, quote, transactionId) {
-
-    const email = config.organiserEmail;
-
-    if (!email) return;
-
-
-
-    const record = buildBookingRecord(values, quote, transactionId);
-
+  async function sendBookingEmail(email, values, quote, transactionId, record) {
     const body = [
-
       'New KFD camping booking (paid)',
-
       '',
-
       `PayPal reference: ${transactionId}`,
-
       `Total paid: ${formatGBP(quote.total)}`,
-
       '',
-
       `Name: ${values.name}`,
-
       `Email: ${values.email}`,
-
       `Postal address: ${values.address}`,
-
       '',
-
       `Pitches: ${quote.pitchCount}`,
-
       `Nights: ${values.nights}`,
-
       `Accommodation: ${values.accommodation}`,
-
       `Adults (17+): ${values.adults}`,
-
       `Children (under 16): ${values.children}`,
-
       `Dogs: ${values.dogs}`,
-
       `Total people: ${quote.totalPeople}`,
-
       '',
-
       'Price breakdown:',
-
       ...quote.breakdown.map((l) => `  ${l.label}: ${formatGBP(l.amount)}`),
-
     ].join('\n');
 
-
-
     await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(email), {
-
       method: 'POST',
-
       headers: {
-
         'Content-Type': 'application/json',
-
         Accept: 'application/json',
-
       },
-
       body: JSON.stringify({
-
         _subject: `KFD Camping — ${values.name} (${quote.pitchCount} pitch${quote.pitchCount > 1 ? 'es' : ''})`,
-
         _template: 'table',
-
         message: body,
-
         ...record,
-
       }),
-
     }).catch(() => {});
+  }
 
+  async function notifyOrganiser(values, quote, transactionId) {
+    const record = buildBookingRecord(values, quote, transactionId);
+    const tasks = [window.KFD_SHEET.log(record)];
 
-
-    const sheetUrl = (config.bookingSheetUrl || '').trim();
-
-    if (sheetUrl) {
-
-      await fetch(sheetUrl, {
-
-        method: 'POST',
-
-        mode: 'no-cors',
-
-        headers: { 'Content-Type': 'application/json' },
-
-        body: JSON.stringify(record),
-
-      }).catch(() => {});
-
+    const email = config.organiserEmail;
+    if (email) {
+      tasks.push(sendBookingEmail(email, values, quote, transactionId, record));
     }
 
+    await Promise.all(tasks);
   }
 
 
