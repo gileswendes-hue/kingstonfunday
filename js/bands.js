@@ -15,15 +15,12 @@ window.KFD_BANDS = [
   },
   {
     id: '500-hojus',
-    name: '500 Hojus',
+    name: '500 Hojas',
     style: 'Live music',
     accent: '#ffffff',
     links: [
       { label: 'Facebook', url: 'https://www.facebook.com/vickypark1989' },
-      {
-        label: 'Spotify',
-        url: 'https://open.spotify.com/artist/6uWF9aw0Kow25H6lFzMIgb?si=MPmGZjLPR_eomKKbjOk3GQ',
-      },
+      { label: 'Spotify', url: 'https://open.spotify.com/artist/6uWF9aw0Kow25H6lFzMIgb?si=MPmGZjLPR_eomKKbjOk3GQ', },
     ],
   },
   {
@@ -43,6 +40,7 @@ window.KFD_BANDS = [
     accent: '#ffb347',
     links: [
       { label: 'Facebook', url: 'https://www.facebook.com/profile.php?id=61562694460144' },
+      { label: 'Instagram', url: 'https://www.instagram.com/vardomanor' },
     ],
   },
   {
@@ -71,6 +69,7 @@ window.KFD_BANDS = [
     accent: '#ff2d8a',
     links: [
       { label: 'Facebook', url: 'https://www.facebook.com/profile.php?id=100072315998797' },
+      { label: 'Instagram', url: 'https://www.instagram.com/irismakemusic' },
     ],
   },
   {
@@ -80,6 +79,7 @@ window.KFD_BANDS = [
     accent: '#ffffff',
     links: [
       { label: 'Facebook', url: 'https://www.facebook.com/profile.php?id=61575780505547' },
+      { label: 'YouTube', url: 'ttps://www.youtube.com/@fretlevelmidnight6635' },
     ],
   },
   {
@@ -96,7 +96,9 @@ window.KFD_BANDS = [
     name: 'Greg Shepherd',
     style: 'Live music · Devon',
     accent: '#ff8c42',
-    links: [],
+    links: [
+      { label: 'Instagram', url: 'https://www.instagram.com/harmonicagreg' },
+    ],
   },
 ];
 
