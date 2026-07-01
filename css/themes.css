@@ -160,7 +160,6 @@ body > footer {
 .balloon-layer {
   position: fixed;
   inset: 0;
-  z-index: 55;
   pointer-events: none;
   overflow: hidden;
   opacity: 0;
@@ -173,23 +172,136 @@ body > footer {
   visibility: visible;
 }
 
-[data-theme="sky"] .balloon-layer {
-  z-index: 2;
+.balloon-layer--back {
+  z-index: 0;
 }
 
-[data-theme="dark"] .balloon-layer,
-:root:not([data-theme="sky"]) .balloon-layer {
-  z-index: 55;
+.balloon-layer--mid {
+  z-index: 1;
 }
 
-[data-theme="dark"] .balloon__body,
-:root:not([data-theme="sky"]) .balloon__body {
-  filter: saturate(1.12) brightness(1.08);
+.balloon-layer--front {
+  z-index: 60;
+}
+
+[data-theme="sky"] .balloon-layer--front {
+  z-index: 3;
 }
 
 .balloon-layer__inner {
   position: absolute;
   inset: 0;
+}
+
+.balloon {
+  position: absolute;
+  bottom: -120px;
+  padding: 0;
+  border: none;
+  background: none;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.16));
+}
+
+.balloon--front {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.balloon--back,
+.balloon--mid {
+  pointer-events: none;
+  opacity: 0.82;
+}
+
+.balloon--back {
+  opacity: 0.55;
+  filter: blur(0.3px) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.1));
+}
+
+.balloon:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 4px;
+}
+
+.balloon__float {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: balloon-rise var(--rise-dur, 28s) linear infinite;
+  animation-delay: var(--rise-delay, 0s);
+  will-change: transform;
+}
+
+.balloon__sway {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-origin: top center;
+  animation: balloon-wind var(--sway-dur, 5s) ease-in-out infinite;
+}
+
+.balloon__body {
+  position: relative;
+  width: var(--balloon-size, 38px);
+  height: calc(var(--balloon-size, 38px) * 1.22);
+  border-radius: 50% 50% 48% 48% / 42% 42% 58% 58%;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.2) 16%, transparent 38%),
+    radial-gradient(circle at 72% 78%, rgba(0, 0, 0, 0.18) 0%, transparent 42%),
+    linear-gradient(
+      145deg,
+      hsl(var(--balloon-hue, 330) 82% 68%) 0%,
+      hsl(var(--balloon-hue, 330) 78% 52%) 52%,
+      hsl(var(--balloon-hue, 330) 70% 42%) 100%
+    );
+  box-shadow:
+    inset -8px -10px 16px rgba(0, 0, 0, 0.14),
+    inset 6px 8px 14px rgba(255, 255, 255, 0.45),
+    0 8px 20px rgba(0, 0, 0, 0.12);
+  transform-origin: bottom center;
+}
+
+.balloon__body::after {
+  content: '';
+  position: absolute;
+  top: 14%;
+  left: 22%;
+  width: 28%;
+  height: 18%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  filter: blur(1px);
+}
+
+.balloon__knot {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid hsl(var(--balloon-hue, 330) 65% 48%);
+}
+
+.balloon__string-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: -1px;
+  transform-origin: top center;
+  animation: balloon-string-wiggle var(--string-dur, 2.4s) ease-in-out infinite;
+}
+
+.balloon__string {
+  width: calc(var(--balloon-size, 38px) * 0.5);
+  height: calc(var(--balloon-size, 38px) * 2.5);
+  color: rgba(55, 55, 75, 0.5);
+}
+
+.balloon__string-path {
+  vector-effect: non-scaling-stroke;
+}
+
+[data-theme="dark"] .balloon--front .balloon__body,
+:root:not([data-theme="sky"]) .balloon--front .balloon__body {
+  filter: saturate(1.15) brightness(1.06);
 }
 
 .cloud {
@@ -291,88 +403,148 @@ body > footer {
   background: #fff;
 }
 
-.balloon {
-  position: absolute;
-  bottom: -160px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0;
-  border: none;
-  background: none;
-  pointer-events: auto;
-  cursor: pointer;
-  animation: balloon-rise var(--rise-dur, 28s) linear infinite;
-  animation-delay: var(--rise-delay, 0s);
-  will-change: transform;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.18));
-}
-
-.balloon:focus-visible {
-  outline: 2px solid var(--pink);
-  outline-offset: 4px;
-}
-
-.balloon__body {
-  width: var(--balloon-size, 38px);
-  height: calc(var(--balloon-size, 38px) * 1.22);
-  border-radius: 50% 50% 48% 48% / 42% 42% 58% 58%;
-  background: hsl(var(--balloon-hue, 330) 75% 58%);
-  box-shadow: inset -6px -6px 12px rgba(0, 0, 0, 0.12), inset 4px 4px 8px rgba(255, 255, 255, 0.35);
-  animation: balloon-sway var(--sway-dur, 3s) ease-in-out infinite alternate;
-  transform-origin: bottom center;
-}
-
-.balloon__knot {
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 6px solid hsl(var(--balloon-hue, 330) 65% 48%);
-}
-
-.balloon__string {
-  width: 1px;
-  height: calc(var(--balloon-size, 38px) * 2.2);
-  background: linear-gradient(180deg, rgba(60, 60, 80, 0.45), rgba(60, 60, 80, 0.2));
-  transform-origin: top center;
-  animation: string-sway var(--sway-dur, 3s) ease-in-out infinite alternate-reverse;
-}
-
 @keyframes cloud-drift {
   from { transform: translateX(0); }
   to { transform: translateX(calc(100vw + 220px)); }
 }
 
 @keyframes balloon-rise {
-  from { transform: translateY(0) translateX(0); }
-  to { transform: translateY(calc(-100vh - 180px)) translateX(var(--drift, 40px)); }
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(var(--drift, 40px), calc(-100vh - 180px), 0); }
 }
 
-@keyframes balloon-sway {
-  from { transform: rotate(calc(var(--swing, 8deg) * -1)); }
-  to { transform: rotate(var(--swing, 8deg)); }
+@keyframes balloon-wind {
+  0% { transform: rotate(calc(var(--swing, 4deg) * -0.7)); }
+  40% { transform: rotate(calc(var(--swing, 4deg) * 0.35)); }
+  70% { transform: rotate(calc(var(--swing, 4deg) * 0.85)); }
+  100% { transform: rotate(calc(var(--swing, 4deg) * -0.45)); }
 }
 
-@keyframes string-sway {
-  from { transform: rotate(calc(var(--swing, 10deg) * -1.2)); }
-  to { transform: rotate(calc(var(--swing, 10deg) * 1.2)); }
+@keyframes balloon-string-wiggle {
+  0% { transform: rotate(-6deg) skewX(-5deg); }
+  18% { transform: rotate(4deg) skewX(6deg); }
+  36% { transform: rotate(7deg) skewX(-4deg); }
+  54% { transform: rotate(-3deg) skewX(5deg); }
+  72% { transform: rotate(5deg) skewX(-6deg); }
+  100% { transform: rotate(-6deg) skewX(-5deg); }
 }
 
-@keyframes balloon-pop {
-  0% { transform: scale(1); opacity: 1; }
-  35% { transform: scale(1.25); opacity: 0.9; }
-  100% { transform: scale(1.7); opacity: 0; }
+@keyframes balloon-pop-burst {
+  0% {
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 1;
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1.25);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.8);
+    opacity: 0;
+  }
+}
+
+@keyframes balloon-pop-flash {
+  0% { opacity: 0.95; transform: translate(-50%, -50%) scale(0.4); }
+  40% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.4); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
+}
+
+@keyframes balloon-pop-ring {
+  0% {
+    opacity: 0.85;
+    transform: translate(-50%, -50%) scale(0.5);
+    border-width: 3px;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.4);
+    border-width: 1px;
+  }
+}
+
+@keyframes balloon-pop-bit {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--bit-angle, 0deg)) translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--bit-angle, 0deg)) translateY(calc(var(--bit-dist, 30px) * -1)) scale(0.2);
+  }
+}
+
+.balloon-pop-fx {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  width: var(--balloon-size, 36px);
+  height: calc(var(--balloon-size, 36px) * 1.22);
+  margin: 0;
+  animation: balloon-pop-burst 0.55s ease-out forwards;
+}
+
+.balloon-pop-fx__flash {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--balloon-size, 36px) * 2.2);
+  height: calc(var(--balloon-size, 36px) * 2.2);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.95) 0%,
+    hsl(var(--balloon-hue, 330) 90% 70% / 0.55) 35%,
+    transparent 70%
+  );
+  animation: balloon-pop-flash 0.35s ease-out forwards;
+}
+
+.balloon-pop-fx__body {
+  position: absolute;
+  inset: 0;
+  border-radius: 50% 50% 48% 48% / 42% 42% 58% 58%;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.9) 0%, transparent 38%),
+    linear-gradient(
+      145deg,
+      hsl(var(--balloon-hue, 330) 82% 68%) 0%,
+      hsl(var(--balloon-hue, 330) 70% 42%) 100%
+    );
+  box-shadow: 0 0 24px hsl(var(--balloon-hue, 330) 80% 55% / 0.65);
+}
+
+.balloon-pop-fx__ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--balloon-size, 36px) * 1.1);
+  height: calc(var(--balloon-size, 36px) * 1.1);
+  border: 3px solid hsl(var(--balloon-hue, 330) 75% 58% / 0.75);
+  border-radius: 50%;
+  animation: balloon-pop-ring 0.5s ease-out forwards;
+}
+
+.balloon-pop-fx__ring--delay {
+  animation-delay: 0.08s;
+  border-color: hsl(var(--balloon-hue, 330) 85% 72% / 0.5);
+}
+
+.balloon-pop-fx__bit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: hsl(var(--balloon-hue, 330) 78% 55%);
+  box-shadow: 0 0 6px hsl(var(--balloon-hue, 330) 80% 60% / 0.8);
+  animation: balloon-pop-bit 0.48s ease-out forwards;
 }
 
 .balloon.is-popping {
-  animation: balloon-pop 0.48s ease-out forwards !important;
-  pointer-events: none;
-}
-
-.balloon.is-popping .balloon__body,
-.balloon.is-popping .balloon__string {
-  animation: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 .theme-bar__toggle.is-active {
@@ -391,10 +563,19 @@ body > footer {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cloud,
-  .balloon,
-  .balloon__body,
-  .balloon__string {
+  .cloud {
     animation: none !important;
+  }
+
+  .balloon__sway {
+    animation-duration: 7s !important;
+  }
+
+  .balloon__string-wrap {
+    animation-duration: 4s !important;
+  }
+
+  .balloon__float {
+    animation-duration: 48s !important;
   }
 }
