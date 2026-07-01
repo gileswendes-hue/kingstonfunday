@@ -5,6 +5,7 @@ window.KFD_CONFIG = window.KFD_CONFIG || {
 
   organiserEmail: 'KFDcamping@outlook.com',
   bookingDeadline: '2026-07-29',
+  bookingSheetUrl: 'https://script.google.com/macros/s/AKfycbzFi5eFPAHmyIjLLYc2GqzIBxjpn7Owwv4NzF4JhOW69JjG62OfO4mbrf7R9fK_vA3V/exec',
   thankYouUrl: 'thank-you.html',
 
   eventDate: '2026-08-01T12:00:00',
