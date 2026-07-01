@@ -124,15 +124,16 @@
                 throw new Error('Payment was not completed.');
               }
 
-              notifyDonation(transactionId, amount);
-              closeModal();
-              const thankYou = config.thankYouUrl || 'thank-you.html';
-              window.location.href =
-                thankYou +
-                '?ref=' +
-                encodeURIComponent(transactionId) +
-                '&donation=1&amount=' +
-                encodeURIComponent(amount.toFixed(2));
+              notifyDonation(transactionId, amount).finally(() => {
+                closeModal();
+                const thankYou = config.thankYouUrl || 'thank-you.html';
+                window.location.href =
+                  thankYou +
+                  '?ref=' +
+                  encodeURIComponent(transactionId) +
+                  '&donation=1&amount=' +
+                  encodeURIComponent(amount.toFixed(2));
+              });
             })
             .catch((err) => {
               showError(
