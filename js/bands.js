@@ -15,7 +15,7 @@ window.KFD_BANDS = [
   },
   {
     id: '500-hojus',
-    name: '500 Hojus',
+    name: '500 Holus',
     style: 'Live music',
     accent: '#ffffff',
     links: [
