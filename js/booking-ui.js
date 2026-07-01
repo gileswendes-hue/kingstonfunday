@@ -29,8 +29,10 @@
     nightsSelect: document.getElementById('nights-select'),
     adultsSlider: document.getElementById('adults-slider'),
     childrenSlider: document.getElementById('children-slider'),
+    dogsSlider: document.getElementById('dogs-slider'),
     adultsOut: document.getElementById('adults-out'),
     childrenOut: document.getElementById('children-out'),
+    dogsOut: document.getElementById('dogs-out'),
     dogsInput: document.getElementById('dogs-input'),
     hiddenNights: document.getElementById('nights'),
     hiddenAdults: document.getElementById('adults'),
@@ -38,6 +40,29 @@
     radioTent: form.querySelector('input[name="accommodation"][value="tent"]'),
     radioVan: form.querySelector('input[name="accommodation"][value="campervan"]'),
   };
+
+  function positionSliderBubble(slider, output) {
+    if (!slider || !output) return;
+    const min = Number(slider.min);
+    const max = Number(slider.max);
+    const val = Number(slider.value);
+    const pct = max === min ? 0 : (val - min) / (max - min);
+    const thumb = 18;
+    const trackWidth = slider.offsetWidth || slider.getBoundingClientRect().width;
+    const x = pct * Math.max(0, trackWidth - thumb) + thumb / 2;
+    output.style.left = `${x}px`;
+    output.textContent = String(val);
+  }
+
+  function bindSliderBubble(slider, output) {
+    if (!slider || !output) return;
+    const update = () => positionSliderBubble(slider, output);
+    slider.addEventListener('input', update);
+    window.addEventListener('resize', update);
+    update();
+  }
+
+  const sliderBubbles = [];
 
   function splitEvenly(total, parts) {
     const counts = Array(parts).fill(0);
@@ -252,8 +277,10 @@
   function syncControls() {
     if (els.adultsOut) els.adultsOut.textContent = String(state.adults);
     if (els.childrenOut) els.childrenOut.textContent = String(state.children);
+    if (els.dogsOut) els.dogsOut.textContent = String(state.dogs);
     if (els.adultsSlider) els.adultsSlider.value = String(state.adults);
     if (els.childrenSlider) els.childrenSlider.value = String(state.children);
+    if (els.dogsSlider) els.dogsSlider.value = String(state.dogs);
     if (els.nightsSelect) els.nightsSelect.value = String(state.nights);
 
     els.tentBtn?.classList.toggle('is-active', state.accommodation === 'tent');
@@ -263,6 +290,7 @@
 
     renderUnits();
     renderDogsOutside();
+    sliderBubbles.forEach(([slider, output]) => positionSliderBubble(slider, output));
   }
 
   function emitChange() {
@@ -295,14 +323,20 @@
     emitChange();
   });
 
-  els.dogsInput?.addEventListener('input', (e) => {
-    const val = Number(e.target.value);
-    state.dogs = Number.isFinite(val) ? Math.min(rates.maxDogs, Math.max(0, val)) : 0;
-    if (String(state.dogs) !== e.target.value) e.target.value = String(state.dogs);
+  els.dogsSlider?.addEventListener('input', (e) => {
+    state.dogs = Math.min(rates.maxDogs, Math.max(0, Number(e.target.value)));
     emitChange();
   });
 
   function init() {
+    bindSliderBubble(els.adultsSlider, els.adultsOut);
+    bindSliderBubble(els.childrenSlider, els.childrenOut);
+    bindSliderBubble(els.dogsSlider, els.dogsOut);
+    sliderBubbles.push(
+      [els.adultsSlider, els.adultsOut],
+      [els.childrenSlider, els.childrenOut],
+      [els.dogsSlider, els.dogsOut]
+    );
     syncHiddenFields();
     syncControls();
   }
