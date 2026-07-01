@@ -1,11 +1,17 @@
 (function () {
   'use strict';
 
+  const rates =
+    typeof RATES !== 'undefined'
+      ? RATES
+      : window.KFD_RATES || { maxPeoplePerPitch: 6, maxDogs: 6, pitchPerNight: 15 };
+
   const form = document.getElementById('booking-form');
   const dashboard = document.getElementById('pitch-dashboard');
   if (!form || !dashboard) return;
 
   let unitUid = 0;
+  const STROKE = '#ff8c42';
 
   const state = {
     accommodation: 'tent',
@@ -41,24 +47,25 @@
 
   function pitchCount() {
     const people = state.adults + state.children;
-    return Math.max(1, Math.ceil(people / RATES.maxPeoplePerPitch));
+    return Math.max(1, Math.ceil(people / rates.maxPeoplePerPitch));
   }
 
   function personScale(count) {
-    if (count <= 1) return 0.9;
-    if (count <= 2) return 0.82;
-    if (count <= 4) return 0.68;
-    return 0.56;
+    if (count <= 1) return 0.88;
+    if (count <= 2) return 0.78;
+    if (count <= 4) return 0.64;
+    return 0.52;
   }
 
   function personSvg(type, x, y, scale) {
     const s = scale * (type === 'child' ? 0.88 : 1);
+    const sw = 1.2;
     return (
       `<g class="pitch-person pitch-person--${type}" transform="translate(${x} ${y}) scale(${s.toFixed(2)})">` +
-      '<circle class="pitch-neon-stroke" cx="0" cy="-4" r="2.2" fill="none" stroke-width="1.2"/>' +
-      '<line class="pitch-neon-stroke" x1="0" y1="-1.8" x2="0" y2="5" stroke-width="1.2"/>' +
-      '<line class="pitch-neon-stroke" x1="0" y1="0.5" x2="-2.8" y2="4" stroke-width="1.2"/>' +
-      '<line class="pitch-neon-stroke" x1="0" y1="0.5" x2="2.8" y2="4" stroke-width="1.2"/>' +
+      `<circle cx="0" cy="-4" r="2.2" fill="none" stroke="${STROKE}" stroke-width="${sw}"/>` +
+      `<line x1="0" y1="-1.8" x2="0" y2="5" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
+      `<line x1="0" y1="0.5" x2="-2.8" y2="4" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
+      `<line x1="0" y1="0.5" x2="2.8" y2="4" stroke="${STROKE}" stroke-width="${sw}" stroke-linecap="round"/>` +
       '</g>'
     );
   }
@@ -90,15 +97,16 @@
   }
 
   function dogSvg(size) {
+    const h = Math.round(size * 0.78);
     return (
-      `<svg class="pitch-dog-neon" viewBox="0 0 36 28" width="${size}" height="${Math.round(size * 0.78)}" aria-hidden="true">` +
-      '<ellipse class="pitch-neon-stroke" cx="18" cy="17" rx="9" ry="6" fill="none" stroke-width="1.4"/>' +
-      '<circle class="pitch-neon-stroke" cx="26" cy="11" r="5" fill="none" stroke-width="1.4"/>' +
-      '<path class="pitch-neon-stroke" d="M10 16 Q4 14 3 8" fill="none" stroke-width="1.3"/>' +
-      '<line class="pitch-neon-stroke" x1="14" y1="22" x2="12" y2="26" stroke-width="1.2"/>' +
-      '<line class="pitch-neon-stroke" x1="18" y1="23" x2="18" y2="27" stroke-width="1.2"/>' +
-      '<line class="pitch-neon-stroke" x1="22" y1="22" x2="24" y2="26" stroke-width="1.2"/>' +
-      '<circle class="pitch-neon-stroke" cx="24" cy="10" r="0.8" fill="none"/>' +
+      `<svg class="pitch-dog-neon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 28" width="${size}" height="${h}" aria-hidden="true">` +
+      `<ellipse cx="18" cy="17" rx="9" ry="6" fill="none" stroke="${STROKE}" stroke-width="1.4"/>` +
+      `<circle cx="26" cy="11" r="5" fill="none" stroke="${STROKE}" stroke-width="1.4"/>` +
+      `<path d="M10 16 Q4 14 3 8" fill="none" stroke="${STROKE}" stroke-width="1.3"/>` +
+      `<line x1="14" y1="22" x2="12" y2="26" stroke="${STROKE}" stroke-width="1.2" stroke-linecap="round"/>` +
+      `<line x1="18" y1="23" x2="18" y2="27" stroke="${STROKE}" stroke-width="1.2" stroke-linecap="round"/>` +
+      `<line x1="22" y1="22" x2="24" y2="26" stroke="${STROKE}" stroke-width="1.2" stroke-linecap="round"/>` +
+      `<circle cx="24" cy="10" r="0.8" fill="none" stroke="${STROKE}" stroke-width="1"/>` +
       '</svg>'
     );
   }
@@ -112,10 +120,10 @@
     return (
       `<figure class="pitch-unit pitch-unit--tent" aria-label="${label || 'Tent pitch'}">` +
       (label ? `<figcaption class="pitch-unit__label">${label}</figcaption>` : '') +
-      '<svg class="pitch-unit__svg" viewBox="0 0 80 62" aria-hidden="true">' +
+      `<svg class="pitch-unit__svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 62" aria-hidden="true">` +
       `<defs><clipPath id="${clipId}"><polygon points="40,12 70,50 10,50"/></clipPath></defs>` +
-      '<polygon class="pitch-neon-stroke pitch-unit__shell" points="40,10 72,50 8,50" fill="none" stroke-width="1.6"/>' +
-      '<line class="pitch-neon-stroke" x1="40" y1="10" x2="40" y2="50" stroke-width="1" opacity="0.45"/>' +
+      `<polygon class="pitch-unit__shell" points="40,10 72,50 8,50" fill="none" stroke="${STROKE}" stroke-width="1.6" stroke-linejoin="round"/>` +
+      `<line x1="40" y1="10" x2="40" y2="50" stroke="${STROKE}" stroke-width="1" opacity="0.45"/>` +
       `<g clip-path="url(#${clipId})">${people}</g>` +
       '</svg></figure>'
     );
@@ -130,13 +138,13 @@
     return (
       `<figure class="pitch-unit pitch-unit--van" aria-label="${label || 'Campervan pitch'}">` +
       (label ? `<figcaption class="pitch-unit__label">${label}</figcaption>` : '') +
-      '<svg class="pitch-unit__svg" viewBox="0 0 88 50" aria-hidden="true">' +
+      `<svg class="pitch-unit__svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 50" aria-hidden="true">` +
       `<defs><clipPath id="${clipId}"><rect x="12" y="14" width="52" height="18" rx="2"/></clipPath></defs>` +
-      '<rect class="pitch-neon-stroke pitch-unit__shell" x="8" y="12" width="58" height="22" rx="3" fill="none" stroke-width="1.6"/>' +
-      '<path class="pitch-neon-stroke" d="M66 14 h10 v18 h-10 z" fill="none" stroke-width="1.4"/>' +
-      '<line class="pitch-neon-stroke" x1="72" y1="18" x2="72" y2="28" stroke-width="1" opacity="0.45"/>' +
-      '<circle class="pitch-neon-stroke" cx="22" cy="36" r="3.5" fill="none" stroke-width="1.2"/>' +
-      '<circle class="pitch-neon-stroke" cx="54" cy="36" r="3.5" fill="none" stroke-width="1.2"/>' +
+      `<rect class="pitch-unit__shell" x="8" y="12" width="58" height="22" rx="3" fill="none" stroke="${STROKE}" stroke-width="1.6"/>` +
+      `<path d="M66 14 h10 v18 h-10 z" fill="none" stroke="${STROKE}" stroke-width="1.4"/>` +
+      `<line x1="72" y1="18" x2="72" y2="28" stroke="${STROKE}" stroke-width="1" opacity="0.45"/>` +
+      `<circle cx="22" cy="36" r="3.5" fill="none" stroke="${STROKE}" stroke-width="1.2"/>` +
+      `<circle cx="54" cy="36" r="3.5" fill="none" stroke="${STROKE}" stroke-width="1.2"/>` +
       `<g clip-path="url(#${clipId})">${people}</g>` +
       '</svg></figure>'
     );
@@ -157,7 +165,7 @@
 
   function renderDogsOutside() {
     if (!els.dogsOutside) return;
-    const n = Math.min(RATES.maxDogs, Math.max(0, state.dogs));
+    const n = Math.min(rates.maxDogs, Math.max(0, state.dogs));
 
     if (n === 0) {
       els.dogsOutside.hidden = true;
@@ -167,7 +175,6 @@
 
     els.dogsOutside.hidden = false;
     els.dogsOutside.innerHTML =
-      '<p class="pitch-dogs-outside__label">Outside</p>' +
       '<div class="pitch-dogs-outside__row">' +
       Array.from({ length: n }, () => dogSvg(30)).join('') +
       '</div>';
@@ -230,11 +237,19 @@
 
   els.dogsInput?.addEventListener('input', (e) => {
     const val = Number(e.target.value);
-    state.dogs = Number.isFinite(val) ? Math.min(RATES.maxDogs, Math.max(0, val)) : 0;
+    state.dogs = Number.isFinite(val) ? Math.min(rates.maxDogs, Math.max(0, val)) : 0;
     if (String(state.dogs) !== e.target.value) e.target.value = String(state.dogs);
     emitChange();
   });
 
-  syncHiddenFields();
-  syncControls();
+  function init() {
+    syncHiddenFields();
+    syncControls();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();

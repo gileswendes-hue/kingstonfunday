@@ -1,36 +1,40 @@
 /**
  * KFD camping pricing calculator.
- * Matches the published rate card:
- * - £12 per pitch per night (up to 4 people)
- * - £3 per extra adult (17+) per night beyond included occupancy
- * - Children under 16 are free
+ * - £15 per pitch per night (2 people included per pitch)
+ * - £4 per extra adult (17+) per night beyond included occupancy
+ * - Children under 16 are free (use included slots first)
  * - £3 flat printing & postage per booking
+ * - Max 6 people per pitch — extra pitches added automatically
+ * - Max 6 dogs per booking
  */
 
 const RATES = {
-  pitchPerNight: 12,
-  extraAdultPerNight: 3,
+  pitchPerNight: 15,
+  extraAdultPerNight: 4,
   postage: 3,
-  maxPeople: 6,
-  includedPeople: 4,
+  maxPeoplePerPitch: 6,
+  includedPeople: 2,
+  maxDogs: 6,
 };
 
 function formatGBP(amount) {
   return `£${amount.toFixed(2)}`;
 }
 
-function calculateCampingPrice({ nights, adults, children }) {
+function calculateCampingPrice({ nights, adults, children, dogs }) {
   const n = Math.max(1, Number(nights) || 1);
   const a = Math.max(0, Number(adults) || 0);
   const c = Math.max(0, Number(children) || 0);
+  const d = Math.max(0, Number(dogs) || 0);
   const totalPeople = a + c;
+  const pitchCount = Math.max(1, Math.ceil(totalPeople / RATES.maxPeoplePerPitch));
 
-  const pitchFee = n * RATES.pitchPerNight;
+  const pitchFee = pitchCount * n * RATES.pitchPerNight;
 
-  let freeSlots = RATES.includedPeople;
-  const childrenInFree = Math.min(c, freeSlots);
-  freeSlots -= childrenInFree;
-  const adultsInFree = Math.min(a, freeSlots);
+  const includedTotal = pitchCount * RATES.includedPeople;
+  const childrenInFree = Math.min(c, includedTotal);
+  const freeSlotsRemaining = includedTotal - childrenInFree;
+  const adultsInFree = Math.min(a, freeSlotsRemaining);
   const chargeableAdults = a - adultsInFree;
   const extraAdultFee = chargeableAdults * n * RATES.extraAdultPerNight;
 
@@ -38,7 +42,10 @@ function calculateCampingPrice({ nights, adults, children }) {
   const total = pitchFee + extraAdultFee + postage;
 
   const breakdown = [
-    { label: `Pitch (${n} night${n === 1 ? '' : 's'} × £${RATES.pitchPerNight})`, amount: pitchFee },
+    {
+      label: `${pitchCount} pitch${pitchCount === 1 ? '' : 'es'} (${n} night${n === 1 ? '' : 's'} × £${RATES.pitchPerNight})`,
+      amount: pitchFee,
+    },
   ];
 
   if (chargeableAdults > 0) {
@@ -54,17 +61,21 @@ function calculateCampingPrice({ nights, adults, children }) {
     nights: n,
     adults: a,
     children: c,
+    dogs: d,
     totalPeople,
+    pitchCount,
     chargeableAdults,
     pitchFee,
     extraAdultFee,
     postage,
     total,
     breakdown,
-    valid: totalPeople >= 1 && totalPeople <= RATES.maxPeople && a >= 1,
+    valid: totalPeople >= 1 && a >= 1 && d <= RATES.maxDogs,
   };
 }
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { RATES, calculateCampingPrice, formatGBP };
 }
+
+window.KFD_RATES = RATES;
