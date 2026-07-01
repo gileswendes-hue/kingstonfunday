@@ -355,6 +355,12 @@ a:hover {
   gap: 1rem;
 }
 
+.field-row--postcode input {
+  max-width: 10rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 @media (min-width: 540px) {
   .field-row--inline {
     grid-template-columns: 1fr 1fr;
