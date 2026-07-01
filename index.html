@@ -42,7 +42,10 @@
   <nav class="site-nav" aria-label="Main">
     <div class="site-nav__inner">
       <div class="site-nav__start">
-        <a class="site-nav__brand" href="#home">KFD <span>2026</span></a>
+        <a class="site-nav__brand" href="#home">
+          <img class="site-nav__logo" src="images/2026_logo.jpg" alt="" width="44" height="44">
+          KFD <span>2026</span>
+        </a>
         <button type="button" class="site-nav__contact" id="contact-open">Contact</button>
         <button type="button" class="site-nav__donate" id="donate-open">Donate</button>
       </div>
@@ -100,12 +103,20 @@
               <li><strong>Location</strong> TQ7 4QD · ///hedge.tidal.admits</li>
             </ul>
           </div>
-          <figure class="about-poster reveal">
-            <button type="button" class="about-poster__trigger" id="poster-enlarge" aria-label="Enlarge lineup poster">
-              <img src="images/2026_lineup.jpg" alt="KFD 2026 official lineup poster" width="600" height="849" loading="eager">
-            </button>
-            <figcaption class="about-poster__hint">Click on the poster to enlarge.</figcaption>
-          </figure>
+          <div class="about-media reveal">
+            <figure class="about-poster">
+              <button type="button" class="about-poster__trigger" id="event-poster-enlarge" aria-label="Enlarge full event poster">
+                <img src="images/2026_poster.jpg" alt="KFD 2026 full event poster" width="600" height="849" loading="eager">
+              </button>
+              <figcaption class="about-poster__hint">Full event poster — click to enlarge.</figcaption>
+            </figure>
+            <figure class="about-poster">
+              <button type="button" class="about-poster__trigger" id="poster-enlarge" aria-label="Enlarge lineup poster">
+                <img src="images/2026_lineup.jpg" alt="KFD 2026 official lineup poster" width="600" height="849" loading="eager">
+              </button>
+              <figcaption class="about-poster__hint">Lineup poster — click to enlarge.</figcaption>
+            </figure>
+          </div>
         </div>
       </div>
     </section>
@@ -114,7 +125,7 @@
       <div class="container">
         <header class="section-header reveal">
           <h2 class="section-title">The lineup</h2>
-          <p class="section-subtitle">Ten acts, ten different flavours. Tap a name to flip the card and find their links.</p>
+          <p class="section-subtitle">Tap a name to flip the card and find their links.</p>
         </header>
         <div id="lineup-grid" class="lineup-grid"></div>
         <p class="lineup-note reveal">Missing a link? Drop us a DM on <a href="https://www.instagram.com/kfd_kingstonfunday/" target="_blank" rel="noopener">Instagram</a> and we'll add it.</p>
@@ -125,7 +136,7 @@
       <div class="container">
         <header class="section-header reveal">
           <h2 class="section-title">Through the years</h2>
-          <p class="section-subtitle">Moments from past Kingston Fun Days. Click any photo to enlarge.</p>
+          <p class="section-subtitle">Moments from past Kingston Fun Days. Tap a photo to view — use the arrows or your browser back button to return.</p>
         </header>
         <div id="gallery-grid" class="gallery-grid"></div>
         <button type="button" class="btn btn--ghost btn--load" id="gallery-load-more" hidden>Load more photos</button>
@@ -318,10 +329,20 @@
   </footer>
 
   <div id="lightbox" class="lightbox" hidden>
-    <button type="button" class="lightbox__close" id="lightbox-close" aria-label="Close">&times;</button>
-    <button type="button" class="lightbox__nav lightbox__nav--prev" id="lightbox-prev" aria-label="Previous photo">&#8249;</button>
+    <button type="button" class="lightbox__close" id="lightbox-close" aria-label="Close photo viewer">
+      <span class="lightbox__close-icon" aria-hidden="true">&times;</span>
+      <span class="lightbox__close-label">Close</span>
+    </button>
+    <button type="button" class="lightbox__nav lightbox__nav--prev" id="lightbox-prev" aria-label="Previous photo">
+      <span class="lightbox__nav-icon" aria-hidden="true">&#8249;</span>
+      <span class="lightbox__nav-label">Prev</span>
+    </button>
     <img id="lightbox-img" class="lightbox__img" alt="">
-    <button type="button" class="lightbox__nav lightbox__nav--next" id="lightbox-next" aria-label="Next photo">&#8250;</button>
+    <button type="button" class="lightbox__nav lightbox__nav--next" id="lightbox-next" aria-label="Next photo">
+      <span class="lightbox__nav-icon" aria-hidden="true">&#8250;</span>
+      <span class="lightbox__nav-label">Next</span>
+    </button>
+    <p class="lightbox__hint">Press Esc, Close, or your browser back button to return to the site.</p>
   </div>
 
   <div class="theme-bar">
