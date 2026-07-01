@@ -26,10 +26,11 @@
     dogsOutside: document.getElementById('pitch-dogs-outside'),
     tentBtn: dashboard.querySelector('[data-type="tent"]'),
     vanBtn: dashboard.querySelector('[data-type="campervan"]'),
-    nightsSelect: document.getElementById('nights-select'),
+    nightsSlider: document.getElementById('nights-slider'),
     adultsSlider: document.getElementById('adults-slider'),
     childrenSlider: document.getElementById('children-slider'),
     dogsSlider: document.getElementById('dogs-slider'),
+    nightsOut: document.getElementById('nights-out'),
     adultsOut: document.getElementById('adults-out'),
     childrenOut: document.getElementById('children-out'),
     dogsOut: document.getElementById('dogs-out'),
@@ -281,7 +282,8 @@
     if (els.adultsSlider) els.adultsSlider.value = String(state.adults);
     if (els.childrenSlider) els.childrenSlider.value = String(state.children);
     if (els.dogsSlider) els.dogsSlider.value = String(state.dogs);
-    if (els.nightsSelect) els.nightsSelect.value = String(state.nights);
+    if (els.nightsSlider) els.nightsSlider.value = String(state.nights);
+    if (els.nightsOut) els.nightsOut.textContent = String(state.nights);
 
     els.tentBtn?.classList.toggle('is-active', state.accommodation === 'tent');
     els.vanBtn?.classList.toggle('is-active', state.accommodation === 'campervan');
@@ -308,8 +310,8 @@
   els.tentBtn?.addEventListener('click', () => setAccommodation('tent'));
   els.vanBtn?.addEventListener('click', () => setAccommodation('campervan'));
 
-  els.nightsSelect?.addEventListener('change', (e) => {
-    state.nights = Number(e.target.value);
+  els.nightsSlider?.addEventListener('input', (e) => {
+    state.nights = Math.min(2, Math.max(1, Number(e.target.value)));
     emitChange();
   });
 
@@ -329,10 +331,12 @@
   });
 
   function init() {
+    bindSliderBubble(els.nightsSlider, els.nightsOut);
     bindSliderBubble(els.adultsSlider, els.adultsOut);
     bindSliderBubble(els.childrenSlider, els.childrenOut);
     bindSliderBubble(els.dogsSlider, els.dogsOut);
     sliderBubbles.push(
+      [els.nightsSlider, els.nightsOut],
       [els.adultsSlider, els.adultsOut],
       [els.childrenSlider, els.childrenOut],
       [els.dogsSlider, els.dogsOut]
