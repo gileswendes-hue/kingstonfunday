@@ -48,7 +48,7 @@ function calculateCampingPrice({ nights, adults, children, dogs }) {
 
   if (chargeableAdults > 0) {
     breakdown.push({
-      label: `Extra adults (${chargeableAdults} × ${n} night${n === 1 ? '' : 's'} × £${RATES.extraAdultPerNight})`,
+      label: `Total adults (${chargeableAdults} × ${n} night${n === 1 ? '' : 's'} × £${RATES.extraAdultPerNight})`,
       amount: extraAdultFee,
     });
   }
